@@ -185,9 +185,16 @@
         .brand-name {
           font-weight: 500;
           color: #212529;
+          
+          .translation {
+            font-weight: normal;
+            font-style: italic;
+            color: #6c757d;
+            font-size: 0.8em;
+          }
         }
         
-        .brand-category {
+        .category-tag {
           color: white;
           background-color: #007bff;
           padding: 0.1rem 0.3rem;
@@ -200,20 +207,12 @@
         }
       }
       
-      .brand-details {
+      .brand-notes {
         padding: 0.5rem;
         background-color: rgba(0, 0, 0, 0.03);
         border-top: 1px solid #dee2e6;
         font-size: 0.8rem;
-        
-        .brand-translation, .brand-notes {
-          margin-bottom: 0.25rem;
-          
-          .label {
-            font-weight: 600;
-            color: #495057;
-          }
-        }
+        color: #495057;
       }
     }
     
