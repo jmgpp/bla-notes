@@ -244,8 +244,27 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
                       {brand.category}
                     </div>
                   </div>
-                  {expandedBrand === brand.name && brand.notes && (
-                    <div className="brand-notes">{brand.notes}</div>
+                  {expandedBrand === brand.name && (
+                    <div className="brand-details">
+                      {brand.notes && <div className="brand-notes">{brand.notes}</div>}
+                      {brand.snippets && brand.snippets.length > 0 && (
+                        <div className="brand-snippets">
+                          <div className="snippets-title">Snippets</div>
+                          <ul className="snippets-list">
+                            {brand.snippets.map((snippet, index) => (
+                              <li key={index} className="snippet-item">
+                                <div className="snippet-preview">
+                                  {snippet.length > 100 ? `${snippet.substring(0, 100)}...` : snippet}
+                                </div>
+                                <div className="snippet-full" onClick={(e) => e.stopPropagation()}>
+                                  {snippet}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               ))}

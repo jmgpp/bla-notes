@@ -230,4 +230,78 @@
     padding-top: 0.25rem;
     font-style: italic;
   }
+}
+
+.brand-details {
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+  .brand-notes {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+  }
+
+  .brand-snippets {
+    margin-top: 10px;
+
+    .snippets-title {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .snippets-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+
+      .snippet-item {
+        font-size: 0.9em;
+        color: #495057;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .snippet-preview {
+          cursor: pointer;
+          position: relative;
+          padding-left: 12px;
+          
+          &:before {
+            content: '•';
+            color: #6c757d;
+            position: absolute;
+            left: 0;
+          }
+
+          &:hover {
+            color: #000;
+          }
+        }
+
+        .snippet-full {
+          display: none;
+          padding: 8px 12px;
+          margin-top: 8px;
+          background-color: #fff;
+          border-radius: 4px;
+          white-space: pre-wrap;
+          cursor: text;
+        }
+
+        &:hover .snippet-preview {
+          display: none;
+        }
+
+        &:hover .snippet-full {
+          display: block;
+        }
+      }
+    }
+  }
 } 

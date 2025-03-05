@@ -3,11 +3,17 @@ export interface Brand {
   category: string;
   translation?: string;
   notes?: string;
+  snippets?: string[];
 }
 
 export const brands: Brand[] = [
   // Hospitals (Known Internationally)
-  { name: 'Mayo Clinic', category: 'Hospitals', translation: 'Clínica Mayo', notes: 'Renowned medical center with locations in Minnesota, Arizona, and Florida' },
+  { name: 'Mayo Clinic', category: 'Hospitals', translation: 'Clínica Mayo', notes: 'Renowned medical center with locations in Minnesota, Arizona, and Florida', snippets: [
+    "Thank you for calling Mayo Clinic, where the needs of the patient come first. How may I assist you today?",
+    "For your safety and privacy, I'll need to verify some information before we proceed.",
+    "Mayo Clinic is committed to providing you with the highest quality care and service.",
+    "Would you like me to connect you with our patient appointment services?"
+  ] },
   { name: 'Johns Hopkins Hospital', category: 'Hospitals', translation: 'Hospital Johns Hopkins', notes: 'Leading academic medical center in Baltimore, Maryland' },
   { name: 'Cleveland Clinic', category: 'Hospitals', translation: 'Clínica Cleveland', notes: 'Multispecialty academic hospital in Cleveland, Ohio' },
   { name: 'Massachusetts General Hospital', category: 'Hospitals', translation: 'Hospital General de Massachusetts', notes: 'Harvard Medical School teaching hospital in Boston' },
@@ -42,7 +48,12 @@ export const brands: Brand[] = [
   { name: 'Safeway Pharmacy', category: 'Pharmacies', translation: 'Farmacia Safeway', notes: 'Pharmacy within Safeway grocery stores' },
   
   // Health Insurance Companies
-  { name: 'Blue Cross Blue Shield', category: 'Health Insurance', translation: 'Blue Cross Blue Shield', notes: 'Federation of 35 independent health insurance organizations' },
+  { name: 'Blue Cross Blue Shield', category: 'Health Insurance', translation: 'Blue Cross Blue Shield', notes: 'Federation of 35 independent health insurance organizations', snippets: [
+    "Thank you for choosing Blue Cross Blue Shield. How may I assist you with your healthcare needs today?",
+    "For your protection, I'll need to verify your member information.",
+    "Let me explain your benefits and coverage options.",
+    "Would you like me to help you locate an in-network provider?"
+  ] },
   { name: 'UnitedHealthcare', category: 'Health Insurance', translation: 'UnitedHealthcare', notes: 'Largest health insurance company in the US' },
   { name: 'Aetna', category: 'Health Insurance', translation: 'Aetna', notes: 'Major health insurance provider, now part of CVS Health' },
   { name: 'Cigna', category: 'Health Insurance', translation: 'Cigna', notes: 'Global health service company' },
@@ -79,7 +90,12 @@ export const brands: Brand[] = [
   // Debt Collector Companies - Credit Card Debt
   { name: 'Synchrony Bank Collections', category: 'Debt', translation: 'Synchrony Bank Collections', notes: 'Credit card debt collection (Specialized)' },
   { name: 'Citibank Collections', category: 'Debt', translation: 'Citibank Collections', notes: 'Credit card debt collection (Specialized)' },
-  { name: 'Capital One Collections', category: 'Debt', translation: 'Capital One Collections', notes: 'Credit card debt collection (Specialized)' },
+  { name: 'Capital One Collections', category: 'Debt', translation: 'Capital One Collections', notes: 'Credit card debt collection (Specialized)', snippets: [
+    "This is an attempt to collect a debt and any information obtained will be used for that purpose.",
+    "This communication is from a debt collector.",
+    "You have the right to dispute the validity of this debt within 30 days.",
+    "Please be advised that this call may be monitored or recorded for quality assurance."
+  ] },
   { name: 'Chase Credit Card Collections', category: 'Debt', translation: 'Chase Credit Card Collections', notes: 'Credit card debt collection (Specialized)' },
   { name: 'Bank of America Collections', category: 'Debt', translation: 'Bank of America Collections', notes: 'Credit card debt collection (Specialized)' },
   
