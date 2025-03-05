@@ -1,0 +1,1842 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Medical",
+      "order": 1,
+      "subcategories": [
+        { "id": 1, "name": "Conditions & Symptoms" },
+        { "id": 2, "name": "Procedures & Tests" },
+        { "id": 3, "name": "Anatomy & Body Parts" },
+        { "id": 4, "name": "Medical Equipment & Devices" },
+        { "id": 5, "name": "Medications & Treatment" },
+        { "id": 6, "name": "Pregnancy & Childbirth" },
+        { "id": 7, "name": "Medical Actions & Processes" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Legal",
+      "order": 2,
+      "subcategories": [
+        { "id": 8, "name": "Court Proceedings" },
+        { "id": 9, "name": "Documentation" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Financial",
+      "order": 3,
+      "subcategories": [
+        { "id": 10, "name": "Banking" },
+        { "id": 11, "name": "Insurance" }
+      ]
+    }
+  ],
+  "terms": [
+    {
+      "id": "leg_001",
+      "categoryId": 2,
+      "subcategoryId": 8,
+      "englishTerm": "hearing",
+      "spanishTerm": "audiencia",
+      "notes": "Court proceeding before a j udge",
+      "tags": [
+        "court",
+        "legal",
+        "proceeding"
+      ]
+    },
+    {
+      "id": "leg_002",
+      "categoryId": 2,
+      "subcategoryId": 8,
+      "englishTerm": "testimony",
+      "spanishTerm": "testimonio",
+      "notes": "Formal statement under oath",
+      "tags": [
+        "court",
+        "witness",
+        "evidence"
+      ]
+    },
+    {
+      "id": "leg_003",
+      "categoryId": 2,
+      "subcategoryId": 8,
+      "englishTerm": "defendant",
+      "spanishTerm": "acusado/a",
+      "notes": "Person accused of a crime",
+      "tags": [
+        "court",
+        "criminal",
+        "party"
+      ],
+      "showTags": false
+    },
+    {
+      "id": "leg_004",
+      "categoryId": 2,
+      "subcategoryId": 8,
+      "englishTerm": "plaintiff",
+      "spanishTerm": "demandante",
+      "notes": "Person who files a lawsuit",
+      "tags": [
+        "court",
+        "civil",
+        "party"
+      ]
+    },
+    {
+      "id": "leg_005",
+      "categoryId": 2,
+      "subcategoryId": 9,
+      "englishTerm": "affidavit",
+      "spanishTerm": "declaración jurada",
+      "notes": "Written statement confirmed by oath",
+      "tags": [
+        "document",
+        "legal",
+        "sworn"
+      ]
+    },
+    {
+      "id": "leg_006",
+      "categoryId": 2,
+      "subcategoryId": 9,
+      "englishTerm": "power of attorney",
+      "spanishTerm": "poder notarial",
+      "notes": "Legal authorization to act for another",
+      "tags": [
+        "document",
+        "authorization",
+        "legal"
+      ]
+    },
+    {
+      "id": "fin_001",
+      "categoryId": 3,
+      "subcategoryId": 10,
+      "englishTerm": "checking account",
+      "spanishTerm": "cuenta corriente",
+      "notes": "Bank account for daily transactions",
+      "tags": [
+        "banking",
+        "account",
+        "money"
+      ]
+    },
+    {
+      "id": "fin_002",
+      "categoryId": 3,
+      "subcategoryId": 10,
+      "englishTerm": "savings account",
+      "spanishTerm": "cuenta de ahorros",
+      "notes": "Bank account for saving money",
+      "tags": [
+        "banking",
+        "account",
+        "savings"
+      ]
+    },
+    {
+      "id": "fin_003",
+      "categoryId": 3,
+      "subcategoryId": 10,
+      "englishTerm": "withdrawal",
+      "spanishTerm": "retiro",
+      "notes": "Taking money from an account",
+      "tags": [
+        "banking",
+        "transaction",
+        "money"
+      ]
+    },
+    {
+      "id": "fin_004",
+      "categoryId": 3,
+      "subcategoryId": 11,
+      "englishTerm": "deductible",
+      "spanishTerm": "deducible",
+      "notes": "Amount paid before insurance coverage",
+      "tags": [
+        "insurance",
+        "payment",
+        "coverage"
+      ]
+    },
+    {
+      "id": "fin_005",
+      "categoryId": 3,
+      "subcategoryId": 11,
+      "englishTerm": "premium",
+      "spanishTerm": "prima",
+      "notes": "Regular payment for insurance coverage",
+      "tags": [
+        "insurance",
+        "payment",
+        "regular"
+      ]
+    },
+    {
+      "id": "fin_006",
+      "categoryId": 3,
+      "subcategoryId": 11,
+      "englishTerm": "claim",
+      "spanishTerm": "reclamo",
+      "notes": "Request for insurance payment",
+      "tags": [
+        "insurance",
+        "request",
+        "payment"
+      ]
+    },
+    {
+      "id": "med_001",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) breast feed",
+      "spanishTerm": "dar de lactar",
+      "notes": "Action of feeding an infant with breast milk",
+      "tags": ["feeding", "infant", "newborn"]
+    },
+    {
+      "id": "med_002",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) deprive",
+      "spanishTerm": "privar",
+      "notes": "To deny someone something, especially something needed",
+      "tags": ["action", "medical care"]
+    },
+    {
+      "id": "med_003",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) develop",
+      "spanishTerm": "desarrollar",
+      "notes": "To grow or cause to grow and become more advanced",
+      "tags": ["disease", "condition", "progression"]
+    },
+    {
+      "id": "med_004",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) discharge",
+      "spanishTerm": "dar de alta",
+      "notes": "To release a patient from hospital care",
+      "tags": ["hospital", "release", "administrative"]
+    },
+    {
+      "id": "med_005",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) discuss",
+      "spanishTerm": "conversar",
+      "notes": "To talk about medical options or treatment",
+      "tags": ["communication", "consultation"]
+    },
+    {
+      "id": "med_006",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) exercise",
+      "spanishTerm": "ejercitarse",
+      "notes": "Physical activity done to maintain health",
+      "tags": ["fitness", "health", "prevention"]
+    },
+    {
+      "id": "med_007",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "(to) give birth",
+      "spanishTerm": "dar a luz",
+      "notes": "The process of delivering a baby",
+      "tags": ["childbirth", "delivery", "labor"]
+    },
+    {
+      "id": "med_008",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) inject",
+      "spanishTerm": "inyectar",
+      "notes": "To administer medication via needle",
+      "tags": ["medication", "procedure", "injection"]
+    },
+    {
+      "id": "med_009",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "(to) numb",
+      "spanishTerm": "adormecer/entumecer",
+      "notes": "To cause loss of sensation",
+      "tags": ["anesthesia", "pain management"]
+    },
+    {
+      "id": "med_010",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) prick",
+      "spanishTerm": "pinchar",
+      "notes": "Small puncture with a sharp object like a needle",
+      "tags": ["injection", "blood draw", "procedure"]
+    },
+    {
+      "id": "med_011",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) rule out",
+      "spanishTerm": "descartar",
+      "notes": "To eliminate a possibility in diagnosis",
+      "tags": ["diagnostic", "assessment", "evaluation"]
+    },
+    {
+      "id": "med_012",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "(to) surround",
+      "spanishTerm": "rodear/estar alrededor",
+      "notes": "To encircle or enclose",
+      "tags": ["position", "location", "anatomy"]
+    },
+    {
+      "id": "med_013",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "abdominal pain",
+      "spanishTerm": "dolor abdominal",
+      "notes": "Pain in the abdominal region",
+      "tags": ["pain", "digestive", "symptom"]
+    },
+    {
+      "id": "med_014",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "acute pain",
+      "spanishTerm": "dolor agudo",
+      "notes": "Sudden, intense pain",
+      "tags": ["pain", "symptom", "acute"]
+    },
+    {
+      "id": "med_015",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "ADD (attention deficit disorder)",
+      "spanishTerm": "trastorno por déficit de atención",
+      "notes": "Neurodevelopmental disorder affecting attention",
+      "tags": ["neurological", "mental health", "chronic"]
+    },
+    {
+      "id": "med_016",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "ADHD (attention deficit and hyperactivity disorder)",
+      "spanishTerm": "trastorno por déficit de atención e hiperactividad",
+      "notes": "Neurodevelopmental disorder with hyperactivity",
+      "tags": ["neurological", "mental health", "chronic"]
+    },
+    {
+      "id": "med_017",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "advanced stage cancer",
+      "spanishTerm": "cáncer en etapa avanzada",
+      "notes": "Late-stage cancer diagnosis",
+      "tags": ["cancer", "terminal", "serious"]
+    },
+    {
+      "id": "med_018",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "airway obstruction",
+      "spanishTerm": "obstrucción de las vías respiratorias",
+      "notes": "Blockage in breathing passages",
+      "tags": ["respiratory", "emergency", "breathing"]
+    },
+    {
+      "id": "med_019",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "allergens",
+      "spanishTerm": "alérgenos",
+      "notes": "Substances that cause allergic reactions",
+      "tags": ["allergy", "immune", "triggers"]
+    },
+    {
+      "id": "med_020",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "amniocentesis",
+      "spanishTerm": "amniocentesis",
+      "notes": "Procedure to test amniotic fluid",
+      "tags": ["pregnancy", "diagnostic", "prenatal"]
+    },
+    {
+      "id": "med_021",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "amniotic sac",
+      "spanishTerm": "saco amniótico",
+      "notes": "Membrane containing amniotic fluid that surrounds the fetus",
+      "tags": ["pregnancy", "fetal", "anatomy"]
+    },
+    {
+      "id": "med_022",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "anesthesia",
+      "spanishTerm": "anestesia",
+      "notes": "Medication that causes loss of sensation",
+      "tags": ["surgery", "pain management", "procedure"]
+    },
+    {
+      "id": "med_023",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "angina",
+      "spanishTerm": "angina",
+      "notes": "Chest pain due to reduced blood flow",
+      "tags": ["cardiac", "pain", "heart"]
+    },
+    {
+      "id": "med_024",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "annual check-up",
+      "spanishTerm": "revisión anual",
+      "notes": "Yearly medical examination",
+      "tags": ["preventive", "routine", "examination"]
+    },
+    {
+      "id": "med_025",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "antihistamine",
+      "spanishTerm": "antihistamínico",
+      "notes": "Medication that counters histamine reactions",
+      "tags": ["allergy", "medication", "treatment"]
+    },
+    {
+      "id": "med_026",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "anxious",
+      "spanishTerm": "ansioso/a",
+      "notes": "Feeling of anxiety or nervousness",
+      "tags": ["mental health", "psychological", "symptom"]
+    },
+    {
+      "id": "med_027",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "best bet/option",
+      "spanishTerm": "mejor apuesta/opción",
+      "notes": "Most favorable treatment choice",
+      "tags": ["decision", "recommendation", "treatment"]
+    },
+    {
+      "id": "med_028",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "birth defects",
+      "spanishTerm": "defectos de nacimiento",
+      "notes": "Congenital abnormalities present at birth",
+      "tags": ["congenital", "abnormality", "newborn"]
+    },
+    {
+      "id": "med_029",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "blindness",
+      "spanishTerm": "ceguera",
+      "notes": "Complete loss of vision",
+      "tags": ["vision", "disability", "chronic"]
+    },
+    {
+      "id": "med_030",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "blood pressure",
+      "spanishTerm": "presión arterial",
+      "notes": "Force of blood against artery walls",
+      "tags": ["cardiovascular", "vital sign", "measurement"]
+    },
+    {
+      "id": "med_031",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "blood sugar level",
+      "spanishTerm": "nivel de azúcar en la sangre",
+      "notes": "Concentration of glucose in blood",
+      "tags": ["diabetes", "metabolism", "measurement"]
+    },
+    {
+      "id": "med_032",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "blood test",
+      "spanishTerm": "examen de sangre",
+      "notes": "Laboratory analysis of blood sample",
+      "tags": ["laboratory", "diagnostic", "test"]
+    },
+    {
+      "id": "med_033",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "blood thinner",
+      "spanishTerm": "anticoagulante",
+      "notes": "Medication to prevent blood clots",
+      "tags": ["cardiovascular", "medication", "anticoagulant"]
+    },
+    {
+      "id": "med_034",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "blood vessel",
+      "spanishTerm": "vaso sanguíneo",
+      "notes": "Tubular structure carrying blood",
+      "tags": ["cardiovascular", "anatomy", "circulation"]
+    },
+    {
+      "id": "med_035",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "bloodwork",
+      "spanishTerm": "análisis de sangre",
+      "notes": "Laboratory tests performed on blood",
+      "tags": ["laboratory", "diagnostic", "test"]
+    },
+    {
+      "id": "med_036",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "blurred vision",
+      "spanishTerm": "visión borrosa",
+      "notes": "Unclear or unfocused vision",
+      "tags": ["vision", "symptom", "eyes"]
+    },
+    {
+      "id": "med_037",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "bone marrow",
+      "spanishTerm": "médula ósea",
+      "notes": "Soft tissue inside bones that produces blood cells",
+      "tags": ["hematology", "anatomy", "blood"]
+    },
+    {
+      "id": "med_038",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "bowel movement",
+      "spanishTerm": "defecación/evacuación/deposición",
+      "notes": "Excretion of waste from intestines",
+      "tags": ["digestive", "elimination", "stool"]
+    },
+    {
+      "id": "med_039",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "brain damage",
+      "spanishTerm": "daño cerebral",
+      "notes": "Injury to brain tissue",
+      "tags": ["neurological", "serious", "brain"]
+    },
+    {
+      "id": "med_040",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "canker sore",
+      "spanishTerm": "aftas",
+      "notes": "Mouth ulcer",
+      "tags": ["mouth", "pain", "oral"]
+    },
+    {
+      "id": "med_041",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "cardiac arrest",
+      "spanishTerm": "paro cardíaco",
+      "notes": "Sudden stop of heart function",
+      "tags": ["cardiac", "emergency", "heart"]
+    },
+    {
+      "id": "med_042",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "chicken pox",
+      "spanishTerm": "varicela",
+      "notes": "Viral infection with itchy rash",
+      "tags": ["infection", "virus", "contagious"]
+    },
+    {
+      "id": "med_043",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "chills",
+      "spanishTerm": "escalofríos",
+      "notes": "Feeling of cold with shivering",
+      "tags": ["fever", "symptom", "infection"]
+    },
+    {
+      "id": "med_044",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "chromosomal problems",
+      "spanishTerm": "problemas congénitos/cromosómicos",
+      "notes": "Abnormalities in chromosomal structure or number",
+      "tags": ["genetic", "congenital", "abnormality"]
+    },
+    {
+      "id": "med_045",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "clot",
+      "spanishTerm": "coágulo",
+      "notes": "Mass of congealed blood",
+      "tags": ["blood", "vascular", "thrombosis"]
+    },
+    {
+      "id": "med_046",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "colonoscopy",
+      "spanishTerm": "colonoscopia",
+      "notes": "Examination of the colon with a scope",
+      "tags": ["procedure", "digestive", "screening"]
+    },
+    {
+      "id": "med_047",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "colostomy",
+      "spanishTerm": "colostomía",
+      "notes": "Surgical opening from colon to body surface",
+      "tags": ["surgery", "digestive", "stoma"]
+    },
+    {
+      "id": "med_048",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "communicable disease",
+      "spanishTerm": "enfermedad contagiosa/transmitible",
+      "notes": "Disease that can spread from person to person",
+      "tags": ["infectious", "contagious", "transmission"]
+    },
+    {
+      "id": "med_049",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "cotton swab",
+      "spanishTerm": "hisopo/bastoncillo/algodoncillo médico",
+      "notes": "Small stick with cotton at one or both ends",
+      "tags": ["medical supply", "examination", "specimen collection"]
+    },
+    {
+      "id": "med_050",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "CPR (cardiopulmonary resuscitation)",
+      "spanishTerm": "RCP (reanimación cardiopulmonar)",
+      "notes": "Emergency procedure for cardiac arrest",
+      "tags": ["emergency", "life support", "procedure"]
+    },
+    {
+      "id": "med_051",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "cramp",
+      "spanishTerm": "calambre",
+      "notes": "Painful involuntary muscle contraction",
+      "tags": ["pain", "muscle", "symptom"]
+    },
+    {
+      "id": "med_052",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "CT scan",
+      "spanishTerm": "tomografía computarizada",
+      "notes": "Computerized X-ray imaging technique",
+      "tags": ["imaging", "diagnostic", "radiology"]
+    },
+    {
+      "id": "med_053",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "dealing/(to) deal",
+      "spanishTerm": "lidiar",
+      "notes": "Managing a medical condition or situation",
+      "tags": ["coping", "management", "psychological"]
+    },
+    {
+      "id": "med_054",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "delay",
+      "spanishTerm": "demora/atraso",
+      "notes": "Postponement of medical intervention",
+      "tags": ["timing", "scheduling", "waiting"]
+    },
+    {
+      "id": "med_055",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "depth",
+      "spanishTerm": "profundidad",
+      "notes": "Distance from surface to bottom",
+      "tags": ["measurement", "wound", "anatomy"]
+    },
+    {
+      "id": "med_056",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "devices",
+      "spanishTerm": "aparatos/dispositivos",
+      "notes": "Medical equipment used for treatment",
+      "tags": ["equipment", "technology", "tools"]
+    },
+    {
+      "id": "med_057",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "diagnosis",
+      "spanishTerm": "diagnóstico",
+      "notes": "Identification of a medical condition",
+      "tags": ["assessment", "evaluation", "identification"]
+    },
+    {
+      "id": "med_058",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "discharge instructions",
+      "spanishTerm": "instrucciones del alta",
+      "notes": "Guidelines for patient care after hospital release",
+      "tags": ["instructions", "aftercare", "post-hospital"]
+    },
+    {
+      "id": "med_059",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "disease",
+      "spanishTerm": "enfermedad",
+      "notes": "Medical condition affecting health",
+      "tags": ["condition", "illness", "disorder"]
+    },
+    {
+      "id": "med_060",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "dizziness",
+      "spanishTerm": "mareos",
+      "notes": "Sensation of unsteadiness or lightheadedness",
+      "tags": ["symptom", "balance", "neurological"]
+    },
+    {
+      "id": "med_061",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "dosage",
+      "spanishTerm": "dosis/dosificación",
+      "notes": "Amount and frequency of medication",
+      "tags": ["medication", "administration", "prescription"]
+    },
+    {
+      "id": "med_062",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "Down syndrome",
+      "spanishTerm": "síndrome de Down",
+      "notes": "Genetic disorder caused by chromosome 21 trisomy",
+      "tags": ["genetic", "chromosomal", "congenital"]
+    },
+    {
+      "id": "med_063",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "ear canal",
+      "spanishTerm": "canal auditivo",
+      "notes": "Passage from outer ear to eardrum",
+      "tags": ["ear", "anatomy", "auditory"]
+    },
+    {
+      "id": "med_064",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "early warning signs",
+      "spanishTerm": "señales de alerta/detección temprana",
+      "notes": "Initial symptoms indicating potential condition",
+      "tags": ["symptoms", "detection", "prevention"]
+    },
+    {
+      "id": "med_065",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "echography",
+      "spanishTerm": "ecografía",
+      "notes": "Ultrasound imaging technique",
+      "tags": ["imaging", "diagnostic", "ultrasound"]
+    },
+    {
+      "id": "med_066",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "EEG (electroencephalogram)",
+      "spanishTerm": "electroencefalograma",
+      "notes": "Recording of brain's electrical activity",
+      "tags": ["neurological", "diagnostic", "brain"]
+    },
+    {
+      "id": "med_067",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "EKG/ECG (electrocardiogram)",
+      "spanishTerm": "electrocardiograma",
+      "notes": "Recording of heart's electrical activity",
+      "tags": ["cardiac", "diagnostic", "heart"]
+    },
+    {
+      "id": "med_068",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "groin",
+      "spanishTerm": "ingle",
+      "notes": "Area between abdomen and thigh",
+      "tags": ["anatomy", "body part", "region"]
+    },
+    {
+      "id": "med_069",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "pap smear",
+      "spanishTerm": "Papanicolaou",
+      "notes": "Screening test for cervical cancer",
+      "tags": ["gynecological", "screening", "preventive"]
+    },
+    {
+      "id": "med_070",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "excessive sweating",
+      "spanishTerm": "sudoración excesiva",
+      "notes": "Abnormal amount of perspiration",
+      "tags": ["symptom", "sweating", "hyperhidrosis"]
+    },
+    {
+      "id": "med_071",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "eye nerve",
+      "spanishTerm": "nervio óptico",
+      "notes": "Nerve connecting eye to brain",
+      "tags": ["eye", "neurological", "vision"]
+    },
+    {
+      "id": "med_072",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "fallopian tubes",
+      "spanishTerm": "trompas de Falopio",
+      "notes": "Tubes connecting ovaries to uterus",
+      "tags": ["reproductive", "female", "anatomy"]
+    },
+    {
+      "id": "med_073",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "family history",
+      "spanishTerm": "historial familiar/antecedente familiar",
+      "notes": "Medical conditions in blood relatives",
+      "tags": ["genetics", "risk factors", "medical history"]
+    },
+    {
+      "id": "med_074",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "fast track to recovery",
+      "spanishTerm": "vía rápida de recuperación",
+      "notes": "Accelerated recovery protocol",
+      "tags": ["recovery", "treatment", "protocol"]
+    },
+    {
+      "id": "med_075",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "fast/to fast",
+      "spanishTerm": "ayuno/ayunar",
+      "notes": "Abstain from food for medical reasons",
+      "tags": ["preparation", "procedure", "diet"]
+    },
+    {
+      "id": "med_076",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "fetal oxygen saturation",
+      "spanishTerm": "saturación de oxígeno del feto",
+      "notes": "Level of oxygen in fetal blood",
+      "tags": ["pregnancy", "monitoring", "fetal"]
+    },
+    {
+      "id": "med_077",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "fetus",
+      "spanishTerm": "feto",
+      "notes": "Unborn offspring in development",
+      "tags": ["pregnancy", "prenatal", "development"]
+    },
+    {
+      "id": "med_078",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "findings",
+      "spanishTerm": "hallazgos",
+      "notes": "Results discovered during examination",
+      "tags": ["results", "diagnosis", "examination"]
+    },
+    {
+      "id": "med_079",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "fingers",
+      "spanishTerm": "dedos de las manos",
+      "notes": "Digits at the end of the hand",
+      "tags": ["anatomy", "extremity", "hand"]
+    },
+    {
+      "id": "med_080",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "flu",
+      "spanishTerm": "gripe/influenza",
+      "notes": "Viral respiratory infection",
+      "tags": ["infection", "respiratory", "viral"]
+    },
+    {
+      "id": "med_081",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "fluid",
+      "spanishTerm": "líquido",
+      "notes": "Liquid in body tissues or cavities",
+      "tags": ["body fluid", "hydration", "retention"]
+    },
+    {
+      "id": "med_082",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "fullness sensation",
+      "spanishTerm": "sensación de llenura",
+      "notes": "Feeling of being full or distended",
+      "tags": ["digestive", "symptom", "abdomen"]
+    },
+    {
+      "id": "med_083",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "genetic counselor",
+      "spanishTerm": "asesor genético/consejero en genética",
+      "notes": "Professional who provides genetic counseling",
+      "tags": ["genetics", "counseling", "specialist"]
+    },
+    {
+      "id": "med_084",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "genetic predisposition",
+      "spanishTerm": "predisposición genética",
+      "notes": "Increased likelihood of developing a condition due to genetics",
+      "tags": ["genetics", "risk factor", "hereditary"]
+    },
+    {
+      "id": "med_085",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "glucose",
+      "spanishTerm": "glucosa",
+      "notes": "Simple sugar in blood",
+      "tags": ["metabolism", "diabetes", "blood sugar"]
+    },
+    {
+      "id": "med_086",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "glucose meter/glucometer",
+      "spanishTerm": "medidor de glucosa/glucómetro",
+      "notes": "Device to measure blood glucose levels",
+      "tags": ["diabetes", "monitoring", "device"]
+    },
+    {
+      "id": "med_087",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "glucose monitor",
+      "spanishTerm": "monitor de glucosa",
+      "notes": "Device for continuous glucose monitoring",
+      "tags": ["diabetes", "monitoring", "device"]
+    },
+    {
+      "id": "med_088",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "glycemic index",
+      "spanishTerm": "índice glucémico",
+      "notes": "Measure of how foods affect blood glucose",
+      "tags": ["nutrition", "diabetes", "diet"]
+    },
+    {
+      "id": "med_089",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "gums",
+      "spanishTerm": "encías",
+      "notes": "Tissue surrounding teeth",
+      "tags": ["dental", "oral", "anatomy"]
+    },
+    {
+      "id": "med_090",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "hard time",
+      "spanishTerm": "momento difícil/mal rato",
+      "notes": "Difficult period during illness or treatment",
+      "tags": ["psychological", "emotional", "experience"]
+    },
+    {
+      "id": "med_091",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "health insurance",
+      "spanishTerm": "seguro de salud",
+      "notes": "Coverage for medical expenses",
+      "tags": ["insurance", "coverage", "payment"]
+    },
+    {
+      "id": "med_092",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heart attack",
+      "spanishTerm": "ataque cardíaco",
+      "notes": "Sudden blockage of blood flow to heart",
+      "tags": ["cardiac", "emergency", "heart"]
+    },
+    {
+      "id": "med_093",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heart disease",
+      "spanishTerm": "enfermedad cardíaca",
+      "notes": "Condition affecting heart function",
+      "tags": ["cardiac", "chronic", "heart"]
+    },
+    {
+      "id": "med_094",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heart murmur",
+      "spanishTerm": "soplo cardíaco",
+      "notes": "Unusual sound during heartbeat",
+      "tags": ["cardiac", "sound", "heart"]
+    },
+    {
+      "id": "med_095",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heart palpitations",
+      "spanishTerm": "palpitaciones cardíacas",
+      "notes": "Sensation of rapid or irregular heartbeat",
+      "tags": ["cardiac", "symptom", "heart"]
+    },
+    {
+      "id": "med_096",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heart rate",
+      "spanishTerm": "ritmo cardíaco",
+      "notes": "Speed of heartbeat",
+      "tags": ["cardiac", "vital sign", "heart"]
+    },
+    {
+      "id": "med_097",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heartbeat",
+      "spanishTerm": "latido del corazón",
+      "notes": "Pulsation of the heart",
+      "tags": ["cardiac", "heart", "vital sign"]
+    },
+    {
+      "id": "med_098",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heartburn",
+      "spanishTerm": "acidez estomacal",
+      "notes": "Burning sensation in chest from acid reflux",
+      "tags": ["digestive", "pain", "reflux"]
+    },
+    {
+      "id": "med_099",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "heat stroke",
+      "spanishTerm": "golpe de calor",
+      "notes": "Severe condition caused by overheating of the body",
+      "tags": ["emergency", "temperature", "environment"]
+    },
+    {
+      "id": "med_100",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "height",
+      "spanishTerm": "altura",
+      "notes": "Vertical measurement from base to top",
+      "tags": ["measurement", "physical", "body"]
+    },
+    {
+      "id": "med_101",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "high risk pregnancy",
+      "spanishTerm": "embarazo de alto riesgo",
+      "notes": "Pregnancy with increased danger to mother or baby",
+      "tags": ["pregnancy", "complications", "monitoring"]
+    },
+    {
+      "id": "med_102",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "hot flashes",
+      "spanishTerm": "bochornos",
+      "notes": "Sudden feeling of warmth, often with sweating",
+      "tags": ["menopause", "hormone", "symptom"]
+    },
+    {
+      "id": "med_103",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "ICU (intensive care unit)",
+      "spanishTerm": "unidad de cuidados intensivos",
+      "notes": "Hospital section for critically ill patients",
+      "tags": ["hospital", "critical care", "monitoring"]
+    },
+    {
+      "id": "med_104",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "in-house",
+      "spanishTerm": "internamente",
+      "notes": "Services provided within a medical facility",
+      "tags": ["services", "facility", "internal"]
+    },
+    {
+      "id": "med_105",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "in-network",
+      "spanishTerm": "dentro de la red",
+      "notes": "Healthcare providers covered by insurance plan",
+      "tags": ["insurance", "coverage", "provider"]
+    },
+    {
+      "id": "med_106",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "indigestion",
+      "spanishTerm": "indigestión/empacho",
+      "notes": "Discomfort in upper abdomen after eating",
+      "tags": ["digestive", "discomfort", "symptom"]
+    },
+    {
+      "id": "med_107",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "induced labor",
+      "spanishTerm": "inducción del parto/parto inducido",
+      "notes": "Artificially starting the birth process",
+      "tags": ["pregnancy", "childbirth", "procedure"]
+    },
+    {
+      "id": "med_108",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "inyección",
+      "spanishTerm": "inyección",
+      "notes": "Introduction of fluid into body via needle",
+      "tags": ["medication", "administration", "needle"]
+    },
+    {
+      "id": "med_109",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "injury",
+      "spanishTerm": "lesión/herida",
+      "notes": "Damage to the body's tissues",
+      "tags": ["trauma", "wound", "damage"]
+    },
+    {
+      "id": "med_110",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "insulin",
+      "spanishTerm": "insulina",
+      "notes": "Hormone that regulates blood sugar",
+      "tags": ["diabetes", "hormone", "medication"]
+    },
+    {
+      "id": "med_111",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "jaundice",
+      "spanishTerm": "ictericia",
+      "notes": "Yellowing of skin and eyes due to liver issues",
+      "tags": ["liver", "symptom", "skin"]
+    },
+    {
+      "id": "med_112",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "painful",
+      "spanishTerm": "doloroso",
+      "notes": "Causing physical discomfort or suffering",
+      "tags": ["pain", "discomfort", "symptom"]
+    },
+    {
+      "id": "med_113",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "joints",
+      "spanishTerm": "articulaciones",
+      "notes": "Connections between bones",
+      "tags": ["skeletal", "movement", "anatomy"]
+    },
+    {
+      "id": "med_114",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "junk food",
+      "spanishTerm": "comida chatarra",
+      "notes": "Food with poor nutritional value",
+      "tags": ["nutrition", "diet", "health"]
+    },
+    {
+      "id": "med_115",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "kidney failure",
+      "spanishTerm": "insuficiencia/falla renal",
+      "notes": "Inability of kidneys to filter waste",
+      "tags": ["renal", "organ failure", "serious"]
+    },
+    {
+      "id": "med_116",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "kneecap",
+      "spanishTerm": "rótula",
+      "notes": "Bone covering knee joint",
+      "tags": ["bone", "leg", "anatomy"]
+    },
+    {
+      "id": "med_117",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "length",
+      "spanishTerm": "longitud",
+      "notes": "Measurement from end to end",
+      "tags": ["measurement", "dimension", "physical"]
+    },
+    {
+      "id": "med_118",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "limbs",
+      "spanishTerm": "extremidades",
+      "notes": "Arms and legs",
+      "tags": ["anatomy", "extremity", "body part"]
+    },
+    {
+      "id": "med_119",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "local anesthetic",
+      "spanishTerm": "anestesia local",
+      "notes": "Medication that numbs a specific area",
+      "tags": ["anesthesia", "procedure", "pain management"]
+    },
+    {
+      "id": "med_120",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "log",
+      "spanishTerm": "diario/registro/bitácora",
+      "notes": "Record of medical events or measurements",
+      "tags": ["documentation", "tracking", "record keeping"]
+    },
+    {
+      "id": "med_121",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "low grade fever",
+      "spanishTerm": "fiebre baja",
+      "notes": "Slight elevation in body temperature",
+      "tags": ["fever", "symptom", "temperature"]
+    },
+    {
+      "id": "med_122",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "meal",
+      "spanishTerm": "comida",
+      "notes": "Food consumed at a specific time",
+      "tags": ["nutrition", "diet", "eating"]
+    },
+    {
+      "id": "med_123",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "menstrual bleeding",
+      "spanishTerm": "sangrado menstrual",
+      "notes": "Monthly discharge of blood from uterus",
+      "tags": ["menstruation", "gynecological", "reproductive"]
+    },
+    {
+      "id": "med_124",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "menstrual cycle",
+      "spanishTerm": "ciclo menstrual",
+      "notes": "Monthly hormonal cycle in females",
+      "tags": ["menstruation", "gynecological", "reproductive"]
+    },
+    {
+      "id": "med_125",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "mental disorder",
+      "spanishTerm": "trastorno mental",
+      "notes": "Condition affecting cognitive or emotional function",
+      "tags": ["psychiatric", "psychological", "mental health"]
+    },
+    {
+      "id": "med_126",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "miscarriage",
+      "spanishTerm": "aborto espontáneo/pérdida",
+      "notes": "Spontaneous loss of pregnancy",
+      "tags": ["pregnancy", "loss", "complication"]
+    },
+    {
+      "id": "med_127",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "morning sickness",
+      "spanishTerm": "náuseas matutinas",
+      "notes": "Nausea during early pregnancy",
+      "tags": ["pregnancy", "nausea", "symptom"]
+    },
+    {
+      "id": "med_128",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "needle",
+      "spanishTerm": "aguja",
+      "notes": "Thin metal instrument for injections",
+      "tags": ["injection", "equipment", "procedure"]
+    },
+    {
+      "id": "med_129",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "nostrils",
+      "spanishTerm": "fosas nasales",
+      "notes": "External openings of the nose",
+      "tags": ["nose", "respiratory", "anatomy"]
+    },
+    {
+      "id": "med_130",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "nutritionist",
+      "spanishTerm": "nutricionista",
+      "notes": "Professional specializing in diet and nutrition",
+      "tags": ["nutrition", "specialist", "diet"]
+    },
+    {
+      "id": "med_131",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "open sore",
+      "spanishTerm": "llaga/herida abierta",
+      "notes": "Unhealed break in skin surface",
+      "tags": ["wound", "skin", "infection risk"]
+    },
+    {
+      "id": "med_132",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "orthopedic walker",
+      "spanishTerm": "andador ortopédico",
+      "notes": "Device to assist with walking",
+      "tags": ["mobility aid", "equipment", "rehabilitation"]
+    },
+    {
+      "id": "med_133",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "orthopedist",
+      "spanishTerm": "ortopedista",
+      "notes": "Doctor specializing in musculoskeletal system",
+      "tags": ["specialist", "bones", "joints"]
+    },
+    {
+      "id": "med_134",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "outpatient",
+      "spanishTerm": "paciente ambulatorio/extrahospitalario",
+      "notes": "Patient not requiring hospital stay",
+      "tags": ["patient", "care", "hospital"]
+    },
+    {
+      "id": "med_135",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "overdose",
+      "spanishTerm": "sobredosis",
+      "notes": "Excessive intake of a substance",
+      "tags": ["toxicity", "drugs", "emergency"]
+    },
+    {
+      "id": "med_136",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "pain killer",
+      "spanishTerm": "analgésico/calmante",
+      "notes": "Medication that reduces pain",
+      "tags": ["medication", "pain relief", "analgesic"]
+    },
+    {
+      "id": "med_137",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "pericarditis",
+      "spanishTerm": "pericarditis",
+      "notes": "Inflammation of the sac around the heart",
+      "tags": ["cardiac", "inflammation", "heart"]
+    },
+    {
+      "id": "med_138",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "pet dander",
+      "spanishTerm": "caspa de mascota",
+      "notes": "Tiny skin particles shed by animals",
+      "tags": ["allergy", "trigger", "respiratory"]
+    },
+    {
+      "id": "med_139",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "precaution",
+      "spanishTerm": "precaución",
+      "notes": "Preventive measure against harm",
+      "tags": ["safety", "prevention", "protection"]
+    },
+    {
+      "id": "med_140",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "pressure",
+      "spanishTerm": "presión",
+      "notes": "Force applied to surface area",
+      "tags": ["physical", "sensation", "measurement"]
+    },
+    {
+      "id": "med_141",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "procedure",
+      "spanishTerm": "procedimiento",
+      "notes": "Medical operation or treatment",
+      "tags": ["treatment", "intervention", "protocol"]
+    },
+    {
+      "id": "med_142",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "readings",
+      "spanishTerm": "lecturas",
+      "notes": "Measured values from medical instruments",
+      "tags": ["measurement", "monitoring", "data"]
+    },
+    {
+      "id": "med_143",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "referral",
+      "spanishTerm": "referencia/derivación médica",
+      "notes": "Recommendation to see a specialist",
+      "tags": ["specialist", "recommendation", "healthcare"]
+    },
+    {
+      "id": "med_144",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "reinstated",
+      "spanishTerm": "reestablecido",
+      "notes": "Restored to previous condition",
+      "tags": ["recovery", "restoration", "status"]
+    },
+    {
+      "id": "med_145",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "retinal detachment",
+      "spanishTerm": "desprendimiento de la retina",
+      "notes": "Separation of retina from back of eye",
+      "tags": ["eye", "emergency", "vision"]
+    },
+    {
+      "id": "med_146",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "ringing in the ears",
+      "spanishTerm": "zumbido en los oídos",
+      "notes": "Perception of sound without external source",
+      "tags": ["ear", "tinnitus", "hearing"]
+    },
+    {
+      "id": "med_147",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "ringworm",
+      "spanishTerm": "tiña",
+      "notes": "Fungal infection of the skin",
+      "tags": ["infection", "fungal", "skin"]
+    },
+    {
+      "id": "med_148",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "sample",
+      "spanishTerm": "muestra",
+      "notes": "Small amount collected for testing",
+      "tags": ["specimen", "testing", "laboratory"]
+    },
+    {
+      "id": "med_149",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "scabies",
+      "spanishTerm": "sarna",
+      "notes": "Contagious skin condition caused by mites",
+      "tags": ["skin", "parasitic", "itching"]
+    },
+    {
+      "id": "med_150",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "scalp",
+      "spanishTerm": "cuero cabelludo",
+      "notes": "Skin covering the top of the head",
+      "tags": ["skin", "head", "hair"]
+    },
+    {
+      "id": "med_151",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "sedative",
+      "spanishTerm": "sedante",
+      "notes": "Medication that induces calm or sleep",
+      "tags": ["medication", "calming", "nervous system"]
+    },
+    {
+      "id": "med_152",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "serious issues",
+      "spanishTerm": "problemas graves",
+      "notes": "Significant health concerns",
+      "tags": ["complications", "serious", "health concerns"]
+    },
+    {
+      "id": "med_153",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "shortness of breath",
+      "spanishTerm": "falta de aire/dificultad para respirar",
+      "notes": "Difficulty breathing or dyspnea",
+      "tags": ["respiratory", "breathing", "symptom"]
+    },
+    {
+      "id": "med_154",
+      "categoryId": 1,
+      "subcategoryId": 5,
+      "englishTerm": "side effects",
+      "spanishTerm": "efectos secundarios",
+      "notes": "Unintended effects of medication",
+      "tags": ["medication", "reaction", "adverse effects"]
+    },
+    {
+      "id": "med_155",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "spina bifida",
+      "spanishTerm": "espina bífida",
+      "notes": "Birth defect affecting spinal column",
+      "tags": ["congenital", "spine", "birth defect"]
+    },
+    {
+      "id": "med_156",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "spine",
+      "spanishTerm": "columna vertebral/espina dorsal",
+      "notes": "Central support structure in back",
+      "tags": ["backbone", "vertebral column", "skeletal"]
+    },
+    {
+      "id": "med_157",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "spirometry test",
+      "spanishTerm": "prueba espirométrica",
+      "notes": "Test to measure lung function",
+      "tags": ["pulmonary", "respiratory", "test"]
+    },
+    {
+      "id": "med_158",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "spotting",
+      "spanishTerm": "manchado",
+      "notes": "Light vaginal bleeding between periods",
+      "tags": ["bleeding", "gynecological", "symptom"]
+    },
+    {
+      "id": "med_159",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "spyrometry",
+      "spanishTerm": "espirometría",
+      "notes": "Measurement of lung capacity",
+      "tags": ["pulmonary", "respiratory", "test"]
+    },
+    {
+      "id": "med_160",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "squeezing sensation",
+      "spanishTerm": "sensación de presión",
+      "notes": "Feeling of compression or tightness",
+      "tags": ["sensation", "pressure", "symptom"]
+    },
+    {
+      "id": "med_161",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "stabbing feeling",
+      "spanishTerm": "sensación de punzadas/apuñaladas",
+      "notes": "Sharp, intense pain",
+      "tags": ["pain", "acute", "sensation"]
+    },
+    {
+      "id": "med_162",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "stomach ache/pain",
+      "spanishTerm": "dolor de estómago",
+      "notes": "Pain or discomfort in stomach region",
+      "tags": ["digestive", "pain", "abdominal"]
+    },
+    {
+      "id": "med_163",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "stool",
+      "spanishTerm": "heces",
+      "notes": "Solid waste eliminated from bowels",
+      "tags": ["feces", "digestive", "elimination"]
+    },
+    {
+      "id": "med_164",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "strep throat",
+      "spanishTerm": "estreptococo",
+      "notes": "Bacterial throat infection",
+      "tags": ["infection", "throat", "bacterial"]
+    },
+    {
+      "id": "med_165",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "symptoms",
+      "spanishTerm": "síntomas",
+      "notes": "Signs indicating presence of condition",
+      "tags": ["indication", "signs", "diagnosis"]
+    },
+    {
+      "id": "med_166",
+      "categoryId": 1,
+      "subcategoryId": 7,
+      "englishTerm": "tea spoon",
+      "spanishTerm": "cucharadita",
+      "notes": "Small measure for medication doses",
+      "tags": ["measurement", "dosage", "administration"]
+    },
+    {
+      "id": "med_167",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "test strip",
+      "spanishTerm": "tira reactiva",
+      "notes": "Small strip for testing body fluids",
+      "tags": ["diagnostic", "glucose", "testing"]
+    },
+    {
+      "id": "med_168",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "throbbing pain",
+      "spanishTerm": "dolor palpitante/pulsante",
+      "notes": "Pulsing pain that comes in waves",
+      "tags": ["pain", "sensation", "rhythmic"]
+    },
+    {
+      "id": "med_169",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "tingling",
+      "spanishTerm": "hormigueo",
+      "notes": "Pins and needles sensation",
+      "tags": ["sensation", "nerves", "paresthesia"]
+    },
+    {
+      "id": "med_170",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "tonsils",
+      "spanishTerm": "amígdalas",
+      "notes": "Lymphoid tissue masses in throat",
+      "tags": ["throat", "immune", "anatomy"]
+    },
+    {
+      "id": "med_171",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "tooth",
+      "spanishTerm": "diente",
+      "notes": "Hard structure in mouth for chewing",
+      "tags": ["dental", "mouth", "oral"]
+    },
+    {
+      "id": "med_172",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "tracheotomy",
+      "spanishTerm": "traqueotomía",
+      "notes": "Surgical opening in the windpipe",
+      "tags": ["surgery", "airway", "procedure"]
+    },
+    {
+      "id": "med_173",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "type 1 diabetes",
+      "spanishTerm": "diabetes de tipo 1",
+      "notes": "Autoimmune disorder affecting insulin production",
+      "tags": ["diabetes", "autoimmune", "chronic"]
+    },
+    {
+      "id": "med_174",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "type 2 diabetes",
+      "spanishTerm": "diabetes de tipo 2",
+      "notes": "Metabolic disorder with insulin resistance",
+      "tags": ["diabetes", "metabolic", "chronic"]
+    },
+    {
+      "id": "med_175",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "ultrasound",
+      "spanishTerm": "ultrasonido/sonograma",
+      "notes": "Imaging using sound waves",
+      "tags": ["imaging", "diagnostic", "non-invasive"]
+    },
+    {
+      "id": "med_176",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "umbilical cord",
+      "spanishTerm": "cordón umbilical",
+      "notes": "Cord connecting fetus to placenta",
+      "tags": ["pregnancy", "fetal", "anatomy"]
+    },
+    {
+      "id": "med_177",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "vaginal discharge",
+      "spanishTerm": "flujo/secreción vaginal",
+      "notes": "Fluid expelled from vagina",
+      "tags": ["gynecological", "reproductive", "secretion"]
+    },
+    {
+      "id": "med_178",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "vascular system",
+      "spanishTerm": "sistema vascular",
+      "notes": "Network of blood vessels in body",
+      "tags": ["cardiovascular", "circulation", "blood vessels"]
+    },
+    {
+      "id": "med_179",
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "englishTerm": "wart",
+      "spanishTerm": "verruga",
+      "notes": "Small growth on skin caused by virus",
+      "tags": ["skin", "virus", "growth"]
+    },
+    {
+      "id": "med_180",
+      "categoryId": 1,
+      "subcategoryId": 4,
+      "englishTerm": "wheelchair",
+      "spanishTerm": "silla de ruedas",
+      "notes": "Chair with wheels for mobility",
+      "tags": ["mobility aid", "equipment", "disability"]
+    },
+    {
+      "id": "med_181",
+      "categoryId": 1,
+      "subcategoryId": 3,
+      "englishTerm": "womb / uterus",
+      "spanishTerm": "útero/matriz",
+      "notes": "Female reproductive organ where fetus develops",
+      "tags": ["reproductive", "female", "anatomy"]
+    },
+    {
+      "id": "med_182",
+      "categoryId": 1,
+      "subcategoryId": 2,
+      "englishTerm": "x-rays",
+      "spanishTerm": "radiografía/rayos x",
+      "notes": "Imaging using electromagnetic radiation",
+      "tags": ["imaging", "diagnostic", "radiology"]
+    },
+    {
+      "id": "med_183",
+      "categoryId": 1,
+      "subcategoryId": 6,
+      "englishTerm": "tangled (as in umbilical cord)",
+      "spanishTerm": "cordón umbilical enredado",
+      "notes": "Umbilical cord wrapped around fetus",
+      "tags": ["pregnancy", "complication", "umbilical"]
+    }
+  ]
+} 

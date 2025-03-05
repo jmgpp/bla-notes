@@ -1,0 +1,33 @@
+.notes-panel {
+  transition: all 0.3s ease;
+  height: 100%;
+  padding: 10px;
+  
+  &.landscape {
+    &.with-widgets {
+      width: 70%;
+    }
+    
+    &.full-width {
+      width: 100%;
+    }
+  }
+  
+  &.portrait {
+    width: 100%;
+    
+    &.with-widgets {
+      margin-top: 25%;
+      height: 75%;
+    }
+  }
+  
+  .notes-area {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+} 

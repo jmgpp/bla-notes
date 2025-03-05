@@ -1,0 +1,56 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.toolbar {
+  z-index: 20; // Ensure toolbar is above the widgets panel
+}
+
+// Base styles for widgets container
+.widgets-container {
+  height: 100%;
+}
+
+// Landscape mode
+@media (orientation: landscape) {
+  .content-container {
+    flex-direction: row;
+  }
+  
+  .widgets-container {
+    width: 30% !important; // Force 30% width
+    min-width: 30%; // Ensure minimum width
+    flex: 0 0 30%; // Don't grow or shrink, stay at 30%
+  }
+  
+  .notes-panel {
+    flex: 1; // Take remaining space
+  }
+  
+  // Ensure the widgets panel inside also has the correct width
+  .widgets-panel.landscape {
+    width: 100% !important;
+  }
+}
+
+// Portrait mode
+@media (orientation: portrait) {
+  .content-container {
+    flex-direction: column;
+  }
+  
+  .widgets-container {
+    width: 100%;
+    height: auto;
+  }
+} 
