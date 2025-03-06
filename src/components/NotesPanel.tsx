@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import './NotesPanel.scss';
 import CommandSuggestions from './CommandSuggestions';
 import CommandResults from './CommandResults';
+import { brands, Brand } from '../data/brands';
 
 interface NotesPanelProps {
-  orientation: 'landscape' | 'portrait';
+  orientation: string;
   showWidgets: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
 }
@@ -48,11 +49,24 @@ const lookupZipCode = async (zipCode: string) => {
   }
 };
 
+interface SuggestionItem {
+  type: 'command' | 'brand';
+  text: string;
+  description?: string;
+}
+
+interface Command {
+  command: string;
+  description: string;
+  syntax: string;
+}
+
 const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, textareaRef }) => {
   const [suggestionsPosition, setSuggestionsPosition] = useState<{ top: number; left: number } | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [commandFilter, setCommandFilter] = useState('');
+  const [suggestionType, setSuggestionType] = useState<'command' | 'brand'>('command');
   const [commandResults, setCommandResults] = useState<Array<{ type: 'zip', data: { zipCode: string; city: string; state: string; } }>>([]);
   const commandStartPosRef = useRef<number>(-1);
   const currentCommandRef = useRef<string | null>(null);
@@ -71,27 +85,128 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
     }
   }, [showWidgets, textareaRef]);
 
+  const getCursorCoordinates = (textarea: HTMLTextAreaElement, cursorPosition: number): { top: number; left: number } | null => {
+    // Create a mirror div to measure text
+    const div = document.createElement('div');
+    const styles = window.getComputedStyle(textarea);
+    
+    // Copy styles from textarea
+    const properties = [
+      'fontFamily',
+      'fontSize',
+      'fontWeight',
+      'letterSpacing',
+      'lineHeight',
+      'padding',
+      'border',
+      'boxSizing'
+    ];
+
+    properties.forEach(prop => {
+      // @ts-ignore
+      div.style[prop] = styles[prop];
+    });
+    
+    div.style.position = 'absolute';
+    div.style.top = '0';
+    div.style.left = '0';
+    div.style.visibility = 'hidden';
+    div.style.whiteSpace = 'pre-wrap';
+    div.style.wordWrap = 'break-word';
+    div.style.width = textarea.offsetWidth + 'px';
+    div.style.height = 'auto';
+    
+    // Get text before cursor and replace spaces with nbsp to preserve them
+    const textBeforeCursor = textarea.value.substring(0, cursorPosition).replace(/ /g, '\u00a0');
+    
+    // Create a span for the last line
+    const lines = textBeforeCursor.split('\n');
+    const lastLine = lines[lines.length - 1];
+    
+    // Add all lines before the last one
+    if (lines.length > 1) {
+      div.textContent = lines.slice(0, -1).join('\n') + '\n';
+    }
+    
+    // Add the last line in a span
+    const span = document.createElement('span');
+    span.textContent = lastLine;
+    div.appendChild(span);
+    
+    document.body.appendChild(div);
+    
+    const { offsetLeft: spanLeft, offsetTop: spanTop } = span;
+    const { top: textareaTop, left: textareaLeft } = textarea.getBoundingClientRect();
+    
+    document.body.removeChild(div);
+    
+    // Calculate coordinates relative to viewport
+    const top = textareaTop + spanTop - textarea.scrollTop + parseInt(styles.lineHeight);
+    const left = textareaLeft + spanLeft - textarea.scrollLeft;
+    
+    return { top, left };
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Handle Ctrl/Cmd + Space
+    if ((e.metaKey || e.ctrlKey) && e.code === 'Space') {
+      e.preventDefault();
+      const textarea = e.currentTarget;
+      const cursorPosition = textarea.selectionStart;
+      
+      // Get the word around the cursor
+      const text = textarea.value;
+      let start = cursorPosition;
+      let end = cursorPosition;
+
+      // Find word boundaries
+      while (start > 0 && /[\w\-]/.test(text[start - 1])) {
+        start--;
+      }
+      while (end < text.length && /[\w\-]/.test(text[end])) {
+        end++;
+      }
+      
+      // Get the current word up to cursor position
+      const currentWord = text.substring(start, cursorPosition);
+      
+      // Show brand suggestions
+      const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
+      if (cursorCoords) {
+        setSuggestionsPosition(cursorCoords);
+        setShowSuggestions(true);
+        setSelectedIndex(0);
+        setCommandFilter(currentWord);
+        setSuggestionType('brand');
+        commandStartPosRef.current = start;
+      }
+      return;
+    }
+
     if (!showSuggestions) return;
 
-    const filteredCommands = PLACEHOLDER_COMMANDS.filter(
-      ({ command }) => command.startsWith(commandFilter.toLowerCase())
-    );
+    const suggestions = suggestionType === 'command' 
+      ? PLACEHOLDER_COMMANDS.filter(({ command }) => command.startsWith(commandFilter.toLowerCase()))
+      : brands.filter(brand => brand.name.toLowerCase().includes(commandFilter.toLowerCase()));
 
-    if (filteredCommands.length === 0) return;
+    if (suggestions.length === 0) return;
 
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => (prev + 1) % filteredCommands.length);
+        setSelectedIndex(prev => (prev + 1) % suggestions.length);
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedIndex(prev => (prev - 1 + filteredCommands.length) % filteredCommands.length);
+        setSelectedIndex(prev => (prev - 1 + suggestions.length) % suggestions.length);
         break;
       case 'Enter':
         e.preventDefault();
-        handleCommandSelect(filteredCommands[selectedIndex].command);
+        if (suggestionType === 'command') {
+          handleCommandSelect((suggestions[selectedIndex] as Command).command);
+        } else {
+          handleBrandSelect(suggestions[selectedIndex] as Brand);
+        }
         break;
       case 'Escape':
         e.preventDefault();
@@ -101,6 +216,11 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Don't process key up for Ctrl/Cmd + Space
+    if ((e.metaKey || e.ctrlKey) && e.code === 'Space') {
+      return;
+    }
+
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 'Escape') {
       return;
     }
@@ -108,6 +228,25 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
     const textarea = e.currentTarget;
     const value = textarea.value;
     const cursorPosition = textarea.selectionStart;
+
+    if (suggestionType === 'brand' && showSuggestions) {
+      // Update filter for brand suggestions
+      let start = commandStartPosRef.current;
+      const currentWord = value.substring(start, cursorPosition);
+      setCommandFilter(currentWord);
+      
+      // Update position if needed
+      const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
+      if (cursorCoords) {
+        setSuggestionsPosition(cursorCoords);
+      }
+
+      // Hide suggestions if we've typed a space
+      if (currentWord.includes(' ')) {
+        setShowSuggestions(false);
+      }
+      return;
+    }
     
     // Find the last '#' before cursor
     let hashPosition = cursorPosition - 1;
@@ -122,6 +261,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       // Update the command filter
       const commandText = currentWord.substring(1); // Remove '#'
       setCommandFilter(commandText);
+      setSuggestionType('command');
       commandStartPosRef.current = hashPosition;
       
       // Check for ZIP command completion (all 5 digits)
@@ -142,18 +282,40 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
         return;
       }
       
-      // Only initialize suggestions position if they're not already showing
-      if (!showSuggestions) {
-        const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
-        if (cursorCoords) {
-          setSuggestionsPosition(cursorCoords);
-          setShowSuggestions(true);
-          setSelectedIndex(0);
-        }
+      // Update suggestions position and show them
+      const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
+      if (cursorCoords) {
+        setSuggestionsPosition(cursorCoords);
+        setShowSuggestions(true);
+        setSelectedIndex(0);
       }
     } else {
-      setShowSuggestions(false);
+      // Only hide suggestions if we're in command mode
+      if (suggestionType === 'command') {
+        setShowSuggestions(false);
+      }
     }
+  };
+
+  const handleBrandSelect = (brand: Brand) => {
+    if (!textareaRef.current || commandStartPosRef.current === -1) return;
+
+    const textarea = textareaRef.current;
+    const start = commandStartPosRef.current;
+    const end = textarea.selectionStart;
+    
+    const newValue = 
+      textarea.value.substring(0, start) + 
+      brand.name + ' ' +
+      textarea.value.substring(end);
+    
+    textarea.value = newValue;
+    const newCursorPos = start + brand.name.length + 1; // +1 for the space
+    textarea.selectionStart = newCursorPos;
+    textarea.selectionEnd = newCursorPos;
+    
+    setShowSuggestions(false);
+    textarea.focus();
   };
 
   const handleCommandSelect = (command: string) => {
@@ -169,52 +331,17 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       textarea.value.substring(end);
     
     textarea.value = newValue;
-    const newCursorPos = start + command.length + 1;
+    const newCursorPos = start + command.length + 1; // +1 for the #
     textarea.selectionStart = newCursorPos;
     textarea.selectionEnd = newCursorPos;
     
     setShowSuggestions(false);
     currentCommandRef.current = command;
+    textarea.focus();
   };
 
   const handleDismissResult = (index: number) => {
     setCommandResults(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const getCursorCoordinates = (textarea: HTMLTextAreaElement, cursorPosition: number): { top: number; left: number } | null => {
-    const div = document.createElement('div');
-    const styles = window.getComputedStyle(textarea);
-    
-    div.style.position = 'absolute';
-    div.style.top = '0';
-    div.style.left = '0';
-    div.style.visibility = 'hidden';
-    div.style.whiteSpace = 'pre-wrap';
-    div.style.font = styles.font;
-    div.style.padding = styles.padding;
-    div.style.width = styles.width;
-    div.style.lineHeight = styles.lineHeight;
-    
-    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
-    div.textContent = textBeforeCursor;
-    
-    const span = document.createElement('span');
-    span.textContent = '';
-    div.appendChild(span);
-    
-    document.body.appendChild(div);
-    
-    const rect = textarea.getBoundingClientRect();
-    const spanRect = span.getBoundingClientRect();
-    
-    document.body.removeChild(div);
-    
-    const lineHeight = parseInt(styles.lineHeight) || 20;
-    
-    return {
-      top: rect.top + spanRect.top - textarea.scrollTop + lineHeight,
-      left: rect.left + spanRect.left - textarea.scrollLeft
-    };
   };
 
   // Handle clicks on the panel to ensure focus stays in the textarea
@@ -235,7 +362,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
           <textarea 
             ref={textareaRef}
             className="notes-area" 
-            placeholder="Take your notes here... (This area will be improved with rich text editing capabilities)"
+            placeholder="Take your notes here... Press Ctrl/Cmd+Space for brand suggestions"
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
             spellCheck={false}
@@ -245,7 +372,14 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
             visible={showSuggestions}
             filter={commandFilter}
             selectedIndex={selectedIndex}
-            onSelect={handleCommandSelect}
+            onSelect={suggestionType === 'command' 
+              ? handleCommandSelect
+              : (text: string) => {
+                const brand = brands.find(b => b.name === text);
+                if (brand) handleBrandSelect(brand);
+              }
+            }
+            type={suggestionType}
           />
           <CommandResults
             results={commandResults}
