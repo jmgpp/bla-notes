@@ -1,11 +1,12 @@
 .notes-panel {
   transition: all 0.3s ease;
-  height: 100%;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   
   &.landscape {
+    height: 100%;
+    padding: 10px;
+    
     &.with-widgets {
       width: 70%;
     }
@@ -16,24 +17,39 @@
   }
   
   &.portrait {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 40px !important; // Space for collapsed toolbar
+    padding: 10px;
     width: 100%;
+    z-index: 8000; // High but lower than widgets and toolbar
+    overflow: hidden;
+    transition: bottom 0.3s ease; // Smooth transition when bottom changes
     
-    &.with-widgets {
-      margin-top: 25%;
-      height: 75%;
+    &.widgets-visible {
+      top: calc(56px + var(--widget-actual-height, 0px));
     }
   }
   
   .card {
+    flex: 1;
     border: none;
     background: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex overflow
+    height: 100%;
 
     .card-body {
-      position: relative;
+      flex: 1;
       padding: 0;
-      height: 100%;
       display: flex;
       flex-direction: column;
+      min-height: 0; // Important for flex overflow
+      height: 100%;
+      position: relative;
     }
   }
   
@@ -45,7 +61,14 @@
     resize: none;
     padding: 16px;
     font-family: system-ui, -apple-system, sans-serif;
-    padding-bottom: 120px;
+    min-height: 0; // Important for flex overflow
+    overflow-y: auto !important; // Ensure scrollability
+    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
   }
 }
 

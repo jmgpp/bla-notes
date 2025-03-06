@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import './WidgetsPanel.scss';
 import AlphabetWidget from './widgets/AlphabetWidget';
 import DictionaryWidget from './widgets/DictionaryWidget';
 import ZipWidget from './widgets/ZipWidget';
 import SuffixesWidget from './widgets/SuffixesWidget';
 import BrandsWidget from './widgets/BrandsWidget';
+import SlidingPanel from './SlidingPanel';
 
 interface WidgetsPanelProps {
   orientation: 'landscape' | 'portrait';
@@ -15,11 +16,54 @@ interface WidgetsPanelProps {
 }
 
 function WidgetsPanel({ orientation, showWidgets, activeWidget, setActiveWidget, selectedText }: WidgetsPanelProps) {
-  const panelClasses = [
-    'widgets-panel',
-    orientation,
-    orientation === 'portrait' && showWidgets ? 'visible' : ''
-  ].filter(Boolean).join(' ');
+  const panelRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (!panelRef.current) return;
+    
+    const updateHeight = () => {
+      if (orientation === 'portrait' && showWidgets) {
+        const height = panelRef.current?.offsetHeight || 0;
+        document.documentElement.style.setProperty('--widget-actual-height', `${height}px`);
+      } else {
+        document.documentElement.style.setProperty('--widget-actual-height', '0px');
+      }
+    };
+    
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight();
+    });
+    
+    resizeObserver.observe(panelRef.current);
+    updateHeight(); // Initial measurement
+    
+    return () => {
+      if (panelRef.current) {
+        resizeObserver.unobserve(panelRef.current);
+      }
+    };
+  }, [orientation, showWidgets]);
+
+  // Effect to toggle widgets-visible class
+  useEffect(() => {
+    if (orientation === 'portrait') {
+      const notesPanel = document.querySelector('.notes-panel');
+      if (notesPanel) {
+        if (showWidgets) {
+          notesPanel.classList.add('widgets-visible');
+        } else {
+          notesPanel.classList.remove('widgets-visible');
+        }
+      }
+    }
+    
+    return () => {
+      const notesPanel = document.querySelector('.notes-panel');
+      notesPanel?.classList.remove('widgets-visible');
+    };
+  }, [orientation, showWidgets]);
+
+  const panelClasses = `widgets-panel ${orientation} ${showWidgets ? 'visible' : 'hidden'} ${orientation === 'portrait' ? 'content-sized' : ''}`;
   
   // Content for each widget type
   const renderWidgetContent = () => {
@@ -40,61 +84,45 @@ function WidgetsPanel({ orientation, showWidgets, activeWidget, setActiveWidget,
   };
   
   return (
-    <div className={panelClasses} tabIndex={-1}>
+    <div ref={panelRef} className={panelClasses} tabIndex={-1}>
       {orientation === 'landscape' ? (
-        // In landscape mode, show tabs
         <div className="card h-100">
-          <div className="card-header">
-            <ul className="nav nav-tabs card-header-tabs widget-tabs">
-              <li className="nav-item">
-                <button 
-                  className={`nav-link ${activeWidget === 'alphabet' ? 'active' : ''}`}
-                  onClick={() => setActiveWidget('alphabet')}
-                  tabIndex={-1}
-                >
-                  Alphabet
-                </button>
-              </li>
-              <li className="nav-item">
-                <button 
-                  className={`nav-link ${activeWidget === 'dictionary' ? 'active' : ''}`}
-                  onClick={() => setActiveWidget('dictionary')}
-                  tabIndex={-1}
-                >
-                  Dictionary
-                </button>
-              </li>
-              <li className="nav-item">
-                <button 
-                  className={`nav-link ${activeWidget === 'zip' ? 'active' : ''}`}
-                  onClick={() => setActiveWidget('zip')}
-                  tabIndex={-1}
-                >
-                  ZIP
-                </button>
-              </li>
-              <li className="nav-item">
-                <button 
-                  className={`nav-link ${activeWidget === 'suffixes' ? 'active' : ''}`}
-                  onClick={() => setActiveWidget('suffixes')}
-                  tabIndex={-1}
-                >
-                  Suffixes
-                </button>
-              </li>
-              <li className="nav-item">
-                <button 
-                  className={`nav-link ${activeWidget === 'brands' ? 'active' : ''}`}
-                  onClick={() => setActiveWidget('brands')}
-                  tabIndex={-1}
-                >
-                  Brands
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div className="card-body">
-            {renderWidgetContent()}
+          <div className="card-body d-flex flex-column">
+            <div className="widget-tabs">
+              {/* Tab buttons */}
+              <button
+                className={`tab-button ${activeWidget === 'alphabet' ? 'active' : ''}`}
+                onClick={() => setActiveWidget('alphabet')}
+              >
+                Alphabet
+              </button>
+              <button
+                className={`tab-button ${activeWidget === 'dictionary' ? 'active' : ''}`}
+                onClick={() => setActiveWidget('dictionary')}
+              >
+                Dictionary
+              </button>
+              <button
+                className={`tab-button ${activeWidget === 'zip' ? 'active' : ''}`}
+                onClick={() => setActiveWidget('zip')}
+              >
+                ZIP
+              </button>
+              <button
+                className={`tab-button ${activeWidget === 'suffixes' ? 'active' : ''}`}
+                onClick={() => setActiveWidget('suffixes')}
+              >
+                Suffixes
+              </button>
+            </div>
+            
+            {/* Widget content */}
+            <div className="widget-content flex-grow-1">
+              {renderWidgetContent()}
+            </div>
+
+            {/* Sliding Panel only in landscape mode */}
+            <SlidingPanel orientation={orientation} />
           </div>
         </div>
       ) : (

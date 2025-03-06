@@ -12,6 +12,66 @@
   &.portrait {
     padding: 0.5rem;
   }
+
+  &.mini {
+    height: auto;
+    padding: 0;
+    
+    .zip-search-container {
+      margin-bottom: 0.25rem;
+      
+      form {
+        gap: 0.15rem;
+      }
+      
+      .zip-input {
+        padding: 0.25rem;
+        font-size: 0.85rem;
+      }
+      
+      .search-button {
+        padding: 0.25rem 0.35rem;
+        font-size: 0.85rem;
+      }
+    }
+    
+    .zip-result-container {
+      padding: 0.25rem;
+      font-size: 0.85rem;
+      
+      .loading-indicator {
+        padding: 0.5rem 0;
+        
+        .spinner {
+          width: 1rem;
+          height: 1rem;
+          border-width: 0.15rem;
+        }
+      }
+      
+      .error-message {
+        padding: 0.25rem;
+        font-size: 0.8rem;
+      }
+      
+      .zip-results {
+        .place-info {
+          padding: 0.25rem;
+          
+          .zip-code {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0d6efd;
+          }
+          
+          .location {
+            font-size: 0.8rem;
+            color: #6c757d;
+          }
+        }
+      }
+    }
+  }
   
   .zip-search-container {
     margin-bottom: 0.5rem;
@@ -98,14 +158,17 @@
         padding: 0.5rem;
         background-color: white;
         border-radius: 4px;
-        margin-bottom: 0.25rem;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         
-        .location-display {
-          font-weight: 500;
-          color: #212529;
-          width: 100%;
-          text-align: center;
+        .zip-code {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #0d6efd;
+          margin-bottom: 0.15rem;
+        }
+        
+        .location {
+          font-size: 0.9rem;
+          color: #6c757d;
         }
       }
     }

@@ -357,7 +357,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       onClick={handlePanelClick}
     >
       <div className="card h-100">
-        <div className="card-header">Notes</div>
+        {orientation === 'landscape' && <div className="card-header">Notes</div>}
         <div className="card-body">
           <textarea 
             ref={textareaRef}

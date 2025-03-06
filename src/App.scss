@@ -51,6 +51,8 @@
   
   .widgets-container {
     width: 100%;
-    height: auto;
+    height: auto !important; /* Force auto height */
+    position: relative;
+    z-index: 8000;
   }
 } 

@@ -4,6 +4,7 @@ import './App.scss'
 import Toolbar from './components/Toolbar'
 import NotesPanel from './components/NotesPanel'
 import WidgetsPanel from './components/WidgetsPanel'
+import SlidingPanel from './components/SlidingPanel'
 
 function App() {
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>(
@@ -154,6 +155,10 @@ function App() {
           </div>
         )}
       </div>
+      
+      {/* Always render the SlidingPanel in portrait mode */}
+      {orientation === 'portrait' && <SlidingPanel orientation={orientation} textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>} />}
+      {orientation === 'landscape' && <SlidingPanel orientation={orientation} textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>} />}
     </div>
   )
 }

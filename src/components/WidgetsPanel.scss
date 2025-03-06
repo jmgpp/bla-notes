@@ -8,20 +8,36 @@
   }
   
   &.portrait {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: auto;
-    max-height: 40%;
-    z-index: 10;
+    max-height: 70vh;
+    z-index: 9000;
     background-color: white;
-    top: 0;
+    top: -100%;
     left: 0;
-    transform: translateY(-100%);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 0;
     
     &.visible {
-      transform: translateY(0);
+      top: 56px;
+    }
+    
+    bottom: auto;
+    max-height: calc(50vh - 56px);
+    overflow-y: auto;
+    
+    &.content-sized {
+      height: auto !important;
+      min-height: auto !important;
+      max-height: 50vh !important;
+      overflow-y: auto;
+      
+      .card, .card-body, .widget-content {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+      }
     }
     
     .card {
@@ -29,16 +45,56 @@
       border-left: none;
       border-right: none;
       border-radius: 0;
+      height: auto;
+      max-height: none;
     }
     
     .card-body {
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      padding: 0.75rem;
+      height: auto;
+      overflow-y: visible;
+      max-height: none;
     }
   }
   
   .widget-tabs {
-    font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #e9ecef;
+    
+    .tab-button {
+      padding: 6px 14px;
+      background-color: #f1f3f5;
+      color: #495057;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      outline: none;
+      
+      &:hover {
+        background-color: #e9ecef;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+      
+      &.active {
+        background-color: #5c7cfa;
+        color: white;
+        
+        &:hover {
+          background-color: #4c6ef5;
+          box-shadow: 0 2px 5px rgba(92, 124, 250, 0.3);
+        }
+      }
+    }
   }
   
   .card-body {
@@ -46,15 +102,36 @@
     display: flex;
     flex-direction: column;
     height: calc(100% - 42px);
+    padding: 0.5rem;
+  }
+
+  .mini-zip-widget {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  
+  .widget-tabs-container {
+    margin: -0.5rem -0.5rem 0.5rem;
+    padding: 0.5rem 0.5rem 0;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
   }
   
   .widget-content {
-    padding: 10px;
-    height: 100%;
+    flex: 1;
     overflow-y: auto;
+    margin-top: 5px;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     
     .portrait & {
       padding: 5px;
+      height: auto;
+      max-height: none;
     }
   }
-} 
+}
+
+// Remove all other .notes-panel styles from this file 

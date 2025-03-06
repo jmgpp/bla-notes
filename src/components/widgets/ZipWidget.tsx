@@ -5,6 +5,7 @@ interface ZipWidgetProps {
   orientation: 'landscape' | 'portrait';
   showWidgets?: boolean;
   selectedText?: string;
+  mini?: boolean;
 }
 
 // Updated interface to match the actual API response structure
@@ -21,7 +22,7 @@ interface ZipResult {
   }[];
 }
 
-const ZipWidget: React.FC<ZipWidgetProps> = ({ orientation, showWidgets, selectedText }) => {
+const ZipWidget: React.FC<ZipWidgetProps> = ({ orientation, showWidgets, selectedText, mini }) => {
   const [zipCode, setZipCode] = useState('');
   const [result, setResult] = useState<ZipResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -111,66 +112,56 @@ const ZipWidget: React.FC<ZipWidgetProps> = ({ orientation, showWidgets, selecte
   };
 
   return (
-    <div className={`zip-widget ${orientation}`} tabIndex={-1}>
+    <div className={`zip-widget ${orientation} ${mini ? 'mini' : ''}`}>
       <div className="zip-search-container">
         <form onSubmit={handleSubmit}>
           <input
+            ref={inputRef}
             type="text"
-            placeholder="Enter 5-digit ZIP code"
+            className="zip-input"
             value={zipCode}
             onChange={handleZipChange}
             onKeyDown={handleKeyDown}
-            className="zip-input"
-            ref={inputRef}
-            tabIndex={-1}
-            aria-label="ZIP code input"
+            placeholder="Enter ZIP code"
+            maxLength={5}
+            pattern="[0-9]*"
           />
           <button 
             type="submit" 
-            className="search-button"
-            disabled={zipCode.length !== 5 || loading}
-            tabIndex={-1}
+            className="search-button" 
+            disabled={loading || zipCode.length !== 5}
           >
-            {loading ? '...' : 'Go'}
+            {loading ? '...' : '→'}
           </button>
         </form>
       </div>
-
-      <div className="zip-result-container">
-        {loading && (
-          <div className="loading-indicator">
-            <div className="spinner"></div>
-          </div>
-        )}
-
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-
-        {result && !loading && !error && (
-          <div className="zip-results">
-            {result.places && result.places.length > 0 ? (
-              result.places.map((place, index) => (
-                <div key={index} className="place-info">
-                  <div className="location-display">
-                    {place['place name']}, {place.state}
+      
+      {(loading || error || result) && (
+        <div className="zip-result-container">
+          {loading && (
+            <div className="loading-indicator">
+              <div className="spinner"></div>
+            </div>
+          )}
+          
+          {error && (
+            <div className="error-message">{error}</div>
+          )}
+          
+          {result && !loading && !error && (
+            <div className="zip-results">
+              <div className="place-info">
+                <div>
+                  <div className="zip-code">{result['post code']}</div>
+                  <div className="location">
+                    {result.places[0]['place name']}, {result.places[0]['state abbreviation']}
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="error-message">No location data found</div>
-            )}
-          </div>
-        )}
-
-        {!result && !loading && !error && (
-          <div className="instructions">
-            <p>Enter a 5-digit US ZIP code</p>
-          </div>
-        )}
-      </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
