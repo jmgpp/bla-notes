@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 import './CommandSuggestions.scss';
 import { brands, Brand } from '../data/brands';
 
@@ -25,14 +25,14 @@ const PLACEHOLDER_COMMANDS: Command[] = [
   { command: 'fin', description: 'Financial terminology search', syntax: '#fin' },
 ];
 
-const CommandSuggestions: React.FC<CommandSuggestionsProps> = ({ 
+const CommandSuggestions = forwardRef<HTMLDivElement, CommandSuggestionsProps>(({ 
   position, 
   visible, 
   filter,
   selectedIndex,
   onSelect,
   type
-}) => {
+}, ref) => {
   const selectedItemRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -136,7 +136,7 @@ const CommandSuggestions: React.FC<CommandSuggestionsProps> = ({
 
   return (
     <div 
-      ref={containerRef}
+      ref={ref || containerRef}
       className={`command-suggestions ${type}`}
       style={{
         top: `${position.top}px`,
@@ -146,7 +146,7 @@ const CommandSuggestions: React.FC<CommandSuggestionsProps> = ({
       {type === 'command' ? renderCommandSuggestions() : renderBrandSuggestions()}
     </div>
   );
-};
+});
 
 const renderCommandSyntax = (command: string, syntax: string, typedText: string) => {
   // For ZIP command - handle special case with number placeholders

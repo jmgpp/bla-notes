@@ -70,6 +70,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
   const [commandResults, setCommandResults] = useState<Array<{ type: 'zip', data: { zipCode: string; city: string; state: string; } }>>([]);
   const commandStartPosRef = useRef<number>(-1);
   const currentCommandRef = useRef<string | null>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Focus the textarea when the component mounts
   useEffect(() => {
@@ -84,6 +85,29 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       textareaRef.current.focus();
     }
   }, [showWidgets, textareaRef]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        showSuggestions &&
+        suggestionsRef.current && 
+        !suggestionsRef.current.contains(event.target as Node) &&
+        textareaRef.current && 
+        !textareaRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    }
+
+    // Add event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Clean up the event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSuggestions, textareaRef]);
 
   const getCursorCoordinates = (textarea: HTMLTextAreaElement, cursorPosition: number): { top: number; left: number } | null => {
     // Create a mirror div to measure text
@@ -351,6 +375,30 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
     }
   };
 
+  // Handle clicks in the textarea that might change cursor position
+  const handleTextareaClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    if (showSuggestions) {
+      // Close suggestions when clicking in the textarea
+      setShowSuggestions(false);
+    }
+  };
+
+  // Handle mouseup in the textarea to detect final cursor position changes
+  const handleTextareaMouseUp = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    if (showSuggestions) {
+      const textarea = e.currentTarget;
+      const currentSelectionStart = textarea.selectionStart;
+      
+      // If the cursor position is now different from where the command/suggestion started,
+      // close the suggestions panel
+      if (commandStartPosRef.current !== -1 && 
+          Math.abs(currentSelectionStart - commandStartPosRef.current) > 1) {
+        setShowSuggestions(false);
+        commandStartPosRef.current = -1;
+      }
+    }
+  };
+
   return (
     <div 
       className={`notes-panel ${orientation} ${showWidgets ? 'with-widgets' : 'full-width'}`}
@@ -365,6 +413,8 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
             placeholder="Take your notes here... Press Ctrl/Cmd+Space for brand suggestions"
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
+            onClick={handleTextareaClick}
+            onMouseUp={handleTextareaMouseUp}
             spellCheck={false}
           />
           <CommandSuggestions
@@ -380,6 +430,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
               }
             }
             type={suggestionType}
+            ref={suggestionsRef}
           />
           <CommandResults
             results={commandResults}
