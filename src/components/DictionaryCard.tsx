@@ -46,7 +46,7 @@ const DictionaryCard: React.FC<DictionaryCardProps> = ({
         className="search-button google"
         title="Search Google"
       >
-        {hasResults ? 'G' : 'Search Google'}
+        {hasResults ? 'G' : 'Google'}
       </button>
       <button 
         onClick={() => handleExternalSearch('translate')} 
@@ -60,7 +60,7 @@ const DictionaryCard: React.FC<DictionaryCardProps> = ({
         className="search-button webster"
         title="Merriam-Webster"
       >
-        {hasResults ? 'W' : 'Merriam-Webster'}
+        {hasResults ? 'W' : 'Webster'}
       </button>
     </div>
   );

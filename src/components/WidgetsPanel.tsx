@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import './WidgetsPanel.scss';
 import AlphabetWidget from './widgets/AlphabetWidget';
 import DictionaryWidget from './widgets/DictionaryWidget';
@@ -22,6 +22,9 @@ interface WidgetsPanelProps {
   selectedText?: string;
   cards?: any[];
   onRemoveCard?: (id: string) => void;
+  onToggleWidgets?: (show: boolean) => void;
+  setSelectedText?: (text: string) => void;
+  textareaRef?: React.RefObject<HTMLTextAreaElement>;
 }
 
 function WidgetsPanel({ 
@@ -31,24 +34,46 @@ function WidgetsPanel({
   setActiveWidget, 
   selectedText,
   cards = [],
-  onRemoveCard = () => {}
+  onRemoveCard = () => {},
+  onToggleWidgets,
+  setSelectedText,
+  textareaRef
 }: WidgetsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [activeLowerTab, setActiveLowerTab] = useState<'cards' | 'diagrams'>('cards');
-  const [expandedSnippets, setExpandedSnippets] = useState<Record<string, boolean>>({});
   
-  // Add function to toggle snippet expansion
-  const toggleSnippetExpansion = (cardId: string) => {
-    setExpandedSnippets(prev => ({
-      ...prev,
-      [cardId]: !prev[cardId]
-    }));
-  };
-  
+  // Add refs for scrolling
+  const cardsGridRef = useRef<HTMLDivElement>(null);
+  const lastCardRef = useRef<HTMLDivElement>(null);
+
+  // Track previous card count to detect when cards are added
+  const [prevCardCount, setPrevCardCount] = useState(cards.length);
+
   // Add function to truncate text
   const getTruncatedText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
+  };
+
+  // Function to insert snippet text at the current cursor position
+  const insertSnippet = (text: string) => {
+    if (!textareaRef || !textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart || 0;
+    const end = textarea.selectionEnd || 0;
+    const value = textarea.value;
+    
+    // Insert the snippet at the cursor position with a space after it
+    textarea.value = value.substring(0, start) + text + " " + value.substring(end);
+    
+    // Set the cursor position after the inserted text and the added space
+    const newPosition = start + text.length + 1;
+    textarea.selectionStart = newPosition;
+    textarea.selectionEnd = newPosition;
+    
+    // Focus the textarea
+    textarea.focus();
   };
 
   useEffect(() => {
@@ -96,13 +121,46 @@ function WidgetsPanel({
     };
   }, [orientation, showWidgets]);
 
+  // Effect to scroll to bottom when new cards are added
+  useLayoutEffect(() => {
+    if (cards.length > prevCardCount) {
+      // Use a series of attempts to ensure the scroll happens
+      const scrollToBottom = () => {
+        if (lastCardRef.current) {
+          lastCardRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end'
+          });
+        } else if (cardsGridRef.current) {
+          cardsGridRef.current.scrollTop = cardsGridRef.current.scrollHeight;
+        }
+      };
+      
+      // Multiple attempts at different times
+      setTimeout(scrollToBottom, 100);
+      setTimeout(scrollToBottom, 300);
+      setTimeout(scrollToBottom, 600);
+    }
+    
+    // Update previous count
+    setPrevCardCount(cards.length);
+  }, [cards.length]);
+
   const panelClasses = `widgets-panel ${orientation} ${showWidgets ? 'visible' : 'hidden'} ${orientation === 'portrait' ? 'content-sized' : ''}`;
   
   // Content for each widget type
   const renderWidgetContent = () => {
     switch (activeWidget) {
       case 'alphabet':
-        return <AlphabetWidget orientation={orientation} selectedText={selectedText} />;
+        return (
+          <AlphabetWidget 
+            orientation={orientation} 
+            selectedText={selectedText}
+            onClose={orientation === 'portrait' && onToggleWidgets ? 
+              () => onToggleWidgets(false) : undefined}
+            onClearText={setSelectedText ? () => setSelectedText('') : undefined}
+          />
+        );
       case 'dictionary':
         return <DictionaryWidget orientation={orientation} showWidgets={showWidgets} selectedText={selectedText} />;
       case 'zip':
@@ -127,24 +185,32 @@ function WidgetsPanel({
     }
 
     return (
-      <div className="cards-grid">
-        {cards.map(card => {
+      <div className="cards-grid" ref={cardsGridRef}>
+        {cards.map((card, index) => {
+          const isLastCard = index === cards.length - 1;
+          const cardRef = isLastCard ? lastCardRef : null;
+          
           // Special case for dictionary cards - render them directly in the grid
           if (card.type === 'dictionary' && card.data.searchTerm) {
             return (
-              <DictionaryCard 
-                key={card.id}
-                searchTerm={card.data.searchTerm} 
-                results={card.data.dictionaryResults || null}
-                cardId={card.id}
-                onRemove={onRemoveCard}
-              />
+              <div key={card.id} ref={cardRef}>
+                <DictionaryCard 
+                  searchTerm={card.data.searchTerm} 
+                  results={card.data.dictionaryResults || null}
+                  cardId={card.id}
+                  onRemove={onRemoveCard}
+                />
+              </div>
             );
           }
           
           // All other card types with the standard card-item wrapper
           return (
-            <div key={card.id} className="card-item">
+            <div 
+              key={card.id} 
+              className="card-item"
+              ref={cardRef}
+            >
               <button 
                 className="close-button"
                 onClick={() => onRemoveCard(card.id)}
@@ -166,18 +232,29 @@ function WidgetsPanel({
               
               {card.type === 'brand-snippet' && card.data.brandName && card.data.snippet && (
                 <div className="brand-snippet-card">
-                  <div className="brand-name">{card.data.brandName}</div>
+                  <div className="brand-header">
+                    <div className="brand-name">{card.data.brandName}</div>
+                    <button 
+                      className="insert-button"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Still prevent event bubbling
+                        insertSnippet(card.data.snippet || '');
+                      }}
+                      aria-label="Insert snippet into notes"
+                      title="Insert into notes"
+                    >
+                      Insert
+                    </button>
+                  </div>
                   <div 
-                    className={`snippet-content ${expandedSnippets[card.id] ? 'expanded' : ''}`}
-                    onClick={() => toggleSnippetExpansion(card.id)}
+                    className="snippet-content"
                   >
-                    {expandedSnippets[card.id] 
-                      ? card.data.snippet 
-                      : getTruncatedText(card.data.snippet, 100)
-                    }
-                    <div className="expand-indicator">
-                      {expandedSnippets[card.id] ? '▲ Less' : '▼ More'}
-                    </div>
+                    {card.data.snippet}
+                    {card.data.city && card.data.state && (
+                      <div className="location">
+                        {card.data.city}, {card.data.state}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -231,6 +308,12 @@ function WidgetsPanel({
                   onClick={() => setActiveWidget('suffixes')}
                 >
                   Suffixes
+                </button>
+                <button
+                  className={`tab-button ${activeWidget === 'brands' ? 'active' : ''}`}
+                  onClick={() => setActiveWidget('brands')}
+                >
+                  Brands
                 </button>
               </div>
               

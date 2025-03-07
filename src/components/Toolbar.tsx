@@ -10,18 +10,18 @@ interface ToolbarProps {
 
 function Toolbar({ orientation, onToggleWidgets, showWidgets, activeWidget, setActiveWidget }: ToolbarProps) {
   const handleWidgetClick = (widget: string) => {
+    // Always set the active widget first - this will capture any selected text
+    setActiveWidget(widget);
+    
     if (orientation === 'portrait') {
       if (activeWidget === widget && showWidgets) {
         // If clicking the same active widget, toggle off
         onToggleWidgets();
-      } else {
+      } else if (!showWidgets) {
         // If widgets panel is hidden, show it
-        if (!showWidgets) {
-          onToggleWidgets();
-        }
-        // Set the active widget
-        setActiveWidget(widget);
+        onToggleWidgets();
       }
+      // No need to call setActiveWidget again since we did it above
     }
   };
 

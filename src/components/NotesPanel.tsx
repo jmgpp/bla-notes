@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './NotesPanel.scss';
 import CommandSuggestions from './CommandSuggestions';
-import ContextMenu from './ContextMenu';
+import ContextMenu, { getRecommendedOptionIndex } from './ContextMenu';
 import { brands, Brand } from '../data/brands';
 import dictionaryData from '../data/dictionary.json';
 
@@ -23,6 +23,9 @@ interface NotesPanelProps {
       dictionaryResults?: any[];
     }
   }) => void;
+  onToggleWidgets: (isVisible: boolean) => void;
+  setActiveWidget: (widget: string) => void;
+  setSelectedText: (text: string) => void;
 }
 
 const PLACEHOLDER_COMMANDS = [
@@ -110,7 +113,10 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   showWidgets, 
   textareaRef, 
   onContextMenuChange,
-  onAddCard 
+  onAddCard,
+  onToggleWidgets,
+  setActiveWidget,
+  setSelectedText
 }) => {
   const [suggestionsPosition, setSuggestionsPosition] = useState<{ top: number; left: number } | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -250,9 +256,15 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
       // Show context menu at cursor position
       const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
       if (cursorCoords) {
+        // First show the context menu
         setContextMenuPosition(cursorCoords);
         setShowContextMenu(true);
-        setContextMenuIndex(0);
+        
+        // Then set the recommended index (after a short delay to ensure the menu is rendered first)
+        setTimeout(() => {
+          const recommendedIndex = getRecommendedOptionIndex(selectedText);
+          setContextMenuIndex(recommendedIndex);
+        }, 10);
       }
       return;
     }
@@ -262,15 +274,15 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          setContextMenuIndex(prev => (prev + 1) % 5); // 5 is the number of context menu options
+          setContextMenuIndex(prev => (prev + 1) % 6); // Updated to 6 options
           break;
         case 'ArrowUp':
           e.preventDefault();
-          setContextMenuIndex(prev => (prev - 1 + 5) % 5); // 5 is the number of context menu options
+          setContextMenuIndex(prev => (prev - 1 + 6) % 6); // Updated to 6 options
           break;
         case 'Enter':
           e.preventDefault();
-          handleContextMenuSelect(['google', 'translate', 'webster', 'dictionary'][contextMenuIndex]);
+          handleContextMenuSelect(['dictionary', 'google', 'translate', 'webster', 'zip', 'alphabet'][contextMenuIndex]);
           break;
         case 'Escape':
           e.preventDefault();
@@ -599,6 +611,35 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
           }
         });
         break;
+      case 'zip':
+        // Handle ZIP code lookup
+        if (/^\d{5}$/.test(contextMenuSelectedText.trim())) {
+          lookupZipCode(contextMenuSelectedText.trim())
+            .then(zipData => {
+              onAddCard({
+                type: 'zip',
+                data: {
+                  zipCode: zipData.zipCode,
+                  city: zipData.city,
+                  state: zipData.state
+                }
+              });
+            })
+            .catch(err => {
+              console.error('Failed to lookup ZIP:', err);
+            });
+        }
+        break;
+      case 'alphabet':
+        // Open alphabet widget with the selected text
+        if (orientation === 'portrait') {
+          // In portrait mode, we need to make widgets visible first
+          onToggleWidgets(true);
+        }
+        // Set alphabet as active widget and pass the selected text
+        setActiveWidget('alphabet');
+        setSelectedText(contextMenuSelectedText);
+        break;
     }
     
     setShowContextMenu(false);
@@ -665,6 +706,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
             selectedText={contextMenuSelectedText}
             selectedIndex={contextMenuIndex}
             onSelect={handleContextMenuSelect}
+            onClose={() => setShowContextMenu(false)}
             ref={contextMenuRef}
           />
         </div>

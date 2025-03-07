@@ -30,18 +30,33 @@ interface SlidingPanelProps {
   contextMenuOpen?: boolean;
   cards?: CardData[];
   onRemoveCard?: (id: string) => void;
+  onAddCard?: (card: CardData) => void;
 }
 
 // Storage key for panel expanded state
 const PANEL_EXPANDED_STORAGE_KEY = 'sliding-panel-expanded-state';
 
-const SlidingPanel: React.FC<SlidingPanelProps> = ({ 
-  orientation, 
-  textareaRef, 
+export function SlidingPanel({
+  orientation,
+  textareaRef,
   contextMenuOpen = false,
   cards = [],
-  onRemoveCard = () => {}
-}) => {
+  onRemoveCard = () => {},
+  onAddCard = () => {}
+}: SlidingPanelProps) {
+  const [activeTab, setActiveTab] = useState('cards');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isPanelFixed, setIsPanelFixed] = useState(false);
+  const prevCardCount = useRef(cards.length);
+  
+  // Track previous orientation
+  const prevOrientationRef = useRef<'landscape' | 'portrait'>(orientation);
+  
+  // Refs for scrolling
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const cardsGridRef = useRef<HTMLDivElement>(null);
+  const lastCardRef = useRef<HTMLDivElement>(null);
+  
   // Get initial expanded state from localStorage if available
   const getInitialExpandedState = () => {
     try {
@@ -54,32 +69,23 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
   };
 
   // Set expanded state with localStorage persistence
-  const [isExpanded, setIsExpanded] = useState(getInitialExpandedState());
-  
-  // Track previous orientation
-  const prevOrientationRef = useRef<'landscape' | 'portrait'>(orientation);
-  
-  const [activeTab, setActiveTab] = useState<'cards' | 'diagrams'>('cards');
-  const [expandedSnippets, setExpandedSnippets] = useState<Record<string, boolean>>({});
-  const [isPanelFixed, setIsPanelFixed] = useState(false);
+  useEffect(() => {
+    const savedState = getInitialExpandedState();
+    if (savedState !== isExpanded) {
+      setIsExpanded(savedState);
+    }
+  }, []);
   
   // Track previous card count to detect when cards are added
-  const [prevCardCount, setPrevCardCount] = useState(cards.length);
-  
-  // Refs for scrolling
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
-  const cardsGridRef = useRef<HTMLDivElement>(null);
-  const lastCardRef = useRef<HTMLDivElement>(null);
-  
-  // Save expanded state to localStorage whenever it changes
   useEffect(() => {
-    try {
-      localStorage.setItem(PANEL_EXPANDED_STORAGE_KEY, isExpanded.toString());
-    } catch (e) {
-      // Silently fail if localStorage is disabled
-      console.warn('Could not save panel state to localStorage', e);
+    // If cards increased and we're not fixed and in portrait mode
+    if (cards.length > prevCardCount.current && !isPanelFixed && orientation === 'portrait') {
+      setIsExpanded(true);
     }
-  }, [isExpanded]);
+    
+    // Update previous count
+    prevCardCount.current = cards.length;
+  }, [cards.length, isPanelFixed, orientation]);
   
   // Handle orientation changes
   useEffect(() => {
@@ -109,20 +115,28 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
 
       if (lastCardRef.current) {
         // Scroll the last card into view with smooth behavior
-        lastCardRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end'
-        });
+        try {
+          lastCardRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end'
+          });
+          console.log('Scrolled to last card');
+        } catch (err) {
+          console.error('Error scrolling to last card:', err);
+        }
       } else if (cardsGridRef.current) {
         // Fallback: scroll the grid to the bottom
         const gridElement = cardsGridRef.current;
         gridElement.scrollTop = gridElement.scrollHeight;
+        console.log('Scrolled grid to bottom, height:', gridElement.scrollHeight);
       } else if (cardsContainerRef.current) {
         // Fallback: scroll the container to the bottom
         const containerElement = cardsContainerRef.current;
         containerElement.scrollTop = containerElement.scrollHeight;
+        console.log('Scrolled container to bottom, height:', containerElement.scrollHeight);
       } else {
         // Retry after a short delay
+        console.log('No scroll target found, retrying...');
         setTimeout(() => attemptScroll(attemptCount + 1), 100);
       }
     };
@@ -131,24 +145,24 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
     setTimeout(attemptScroll, 50);
   };
   
-  // Effect to auto-expand panel when cards are added (unless fixed)
-  useEffect(() => {
-    // If cards increased and we're not fixed and in portrait mode
-    if (cards.length > prevCardCount && !isPanelFixed && orientation === 'portrait') {
-      setIsExpanded(true);
-    }
-    
-    // Update previous count
-    setPrevCardCount(cards.length);
-  }, [cards.length, isPanelFixed, orientation, prevCardCount]);
-  
   // Effect to scroll to bottom when new cards are added, using a layout effect for timing
   useLayoutEffect(() => {
-    if (cards.length > prevCardCount) {
-      // Small initial delay to let the DOM update
+    if (cards.length > prevCardCount.current) {
+      // Use a series of attempts to ensure the scroll happens after DOM update
+      // First attempt - quick
       setTimeout(() => {
         scrollToBottom();
       }, 100);
+      
+      // Second attempt - after a bit more time
+      setTimeout(() => {
+        scrollToBottom();
+      }, 300);
+      
+      // Third attempt - after animation frames have likely completed
+      setTimeout(() => {
+        scrollToBottom();
+      }, 600);
     }
   }, [cards.length, prevCardCount]);
 
@@ -175,7 +189,7 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
     setTimeout(() => textareaRef.current?.focus(), 0);
   };
 
-  const handleTabChange = (tab: 'cards' | 'diagrams') => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     
     // If panel is collapsed in portrait mode, expand it
@@ -224,20 +238,6 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
       }
     }
   }, [isExpanded, orientation]);
-
-  // Toggle snippet expansion
-  const toggleSnippetExpansion = (cardId: string) => {
-    setExpandedSnippets(prev => ({
-      ...prev,
-      [cardId]: !prev[cardId]
-    }));
-  };
-
-  // Helper to get truncated text
-  const getTruncatedText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  };
 
   // Render cards in a grid layout
   const renderCards = () => {
@@ -301,18 +301,27 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
               
               {card.type === 'brand-snippet' && card.data.brandName && card.data.snippet && (
                 <div className="brand-snippet-card">
-                  <div className="brand-name">{card.data.brandName}</div>
-                  <div 
-                    className={`snippet-content ${expandedSnippets[card.id] ? 'expanded' : ''}`}
-                    onClick={() => toggleSnippetExpansion(card.id)}
-                  >
-                    {expandedSnippets[card.id] 
-                      ? card.data.snippet 
-                      : getTruncatedText(card.data.snippet, 100)
-                    }
-                    <div className="expand-indicator">
-                      {expandedSnippets[card.id] ? '▲ Less' : '▼ More'}
-                    </div>
+                  <div className="brand-header">
+                    <div className="brand-name">{card.data.brandName}</div>
+                    <button 
+                      className="insert-button"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering other events
+                        insertSnippet(card.data.snippet || '');
+                      }}
+                      aria-label="Insert snippet into notes"
+                      title="Insert into notes"
+                    >
+                      Insert
+                    </button>
+                  </div>
+                  <div className="snippet-content">
+                    {card.data.snippet}
+                    {card.data.city && card.data.state && (
+                      <div className="location">
+                        {card.data.city}, {card.data.state}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -321,6 +330,38 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
         })}
       </div>
     );
+  };
+
+  // Helper for setting expanded state
+  const toggleExpand = (expanded: boolean) => {
+    setIsExpanded(expanded);
+    try {
+      localStorage.setItem(PANEL_EXPANDED_STORAGE_KEY, expanded.toString());
+    } catch (e) {
+      // Silently fail if localStorage is disabled
+      console.warn('Could not save panel state to localStorage', e);
+    }
+  };
+  
+  // Add function to insert snippet text at the current cursor position
+  const insertSnippet = (text: string) => {
+    if (!textareaRef || !textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart || 0;
+    const end = textarea.selectionEnd || 0;
+    const value = textarea.value;
+    
+    // Insert the snippet at the cursor position with a space after it
+    textarea.value = value.substring(0, start) + text + " " + value.substring(end);
+    
+    // Set the cursor position after the inserted text and the added space
+    const newPosition = start + text.length + 1;
+    textarea.selectionStart = newPosition;
+    textarea.selectionEnd = newPosition;
+    
+    // Focus the textarea
+    textarea.focus();
   };
 
   return (
@@ -415,6 +456,6 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
       )}
     </div>
   );
-};
+}
 
-export default SlidingPanel; 
+export default SlidingPanel;

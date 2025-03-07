@@ -29,14 +29,14 @@
     
     .clear-search {
       position: absolute;
-      right: 12px;
+      right: 8px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
       color: #6c757d;
       font-size: 1.2rem;
-      line-height: 1;
+      line-height: 0.7;
       cursor: pointer;
       padding: 0;
       width: 20px;
@@ -285,6 +285,16 @@
             }
           }
         }
+      }
+    }
+  }
+  
+  // Landscape-specific adjustments
+  &.landscape {
+    .search-container {
+      .clear-search {
+        right: 9px;
+        top: calc(50% - 3px);
       }
     }
   }

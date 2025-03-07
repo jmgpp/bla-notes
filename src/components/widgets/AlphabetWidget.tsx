@@ -39,9 +39,16 @@ const letterMap = new Map(
 interface AlphabetWidgetProps {
   orientation: 'landscape' | 'portrait';
   selectedText?: string;
+  onClose?: () => void;
+  onClearText?: () => void;
 }
 
-const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({ orientation, selectedText }) => {
+const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({ 
+  orientation, 
+  selectedText,
+  onClose,
+  onClearText
+}) => {
   // Function to convert text to simple word representation
   const getTextRepresentation = (text: string) => {
     if (!text) return null;
@@ -52,7 +59,18 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({ orientation, selectedTe
     
     return (
       <div className="selected-text-representation">
-        <h6>Selected Text: "{cleanText}"</h6>
+        <div className="text-header">
+          <h6>Selected Text: "{cleanText}"</h6>
+          {onClearText && (
+            <button 
+              className="alphabet-clear-button"
+              onClick={onClearText}
+              aria-label="Clear selected text"
+            >
+              Clear
+            </button>
+          )}
+        </div>
         <div className="word-representation">
           {cleanText.split('').map((char, index) => {
             const letter = char.toLowerCase();
@@ -79,6 +97,21 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({ orientation, selectedTe
     );
   };
   
+  // Render close button only in portrait mode
+  const renderCloseButton = () => {
+    if (orientation !== 'portrait' || !onClose) return null;
+    
+    return (
+      <button 
+        className="alphabet-close-button" 
+        onClick={onClose}
+        aria-label="Close alphabet widget"
+      >
+        ×
+      </button>
+    );
+  };
+  
   return (
     <div className={`alphabet-widget ${orientation}`} tabIndex={-1}>
       {selectedText && getTextRepresentation(selectedText)}
@@ -94,6 +127,8 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({ orientation, selectedTe
           </div>
         ))}
       </div>
+      
+      {renderCloseButton()}
     </div>
   );
 };

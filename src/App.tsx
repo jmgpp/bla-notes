@@ -36,6 +36,7 @@ function App() {
   const appContainerRef = useRef<HTMLDivElement>(null)
   const mouseLeaveTimerRef = useRef<number | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [preventAutoHide, setPreventAutoHide] = useState(false)
 
   // Handle orientation changes
   useEffect(() => {
@@ -75,16 +76,18 @@ function App() {
   };
 
   // Handle mouse leave for widgets panel in portrait mode
-  const handleMouseLeave = (e: React.MouseEvent) => {
-    if (orientation !== 'portrait' || !showWidgets) return;
+  const handleMouseLeave = (event: React.MouseEvent) => {
+    // Skip auto-hide if it's explicitly prevented
+    if (preventAutoHide) {
+      return;
+    }
+
+    // Only apply in portrait mode
+    if (orientation !== 'portrait') return;
     
-    const widgetsRect = widgetsPanelRef.current?.getBoundingClientRect();
-    const toolbarRect = toolbarRef.current?.getBoundingClientRect();
-    
-    if (!widgetsRect || !toolbarRect) return;
-    
-    const mouseY = e.clientY;
-    const mouseX = e.clientX;
+    // Get mouse position and toolbar bottom position
+    const mouseY = event.clientY;
+    const toolbarRect = toolbarRef.current?.getBoundingClientRect() || { bottom: 0 };
     
     // Check if mouse is moving toward the toolbar
     const isMovingToToolbar = mouseY <= toolbarRect.bottom;
@@ -125,26 +128,35 @@ function App() {
     
     if (start === end) return ''; // No selection
     
-    const selection = textarea.value.substring(start, end);
-    return selection.length > 30 ? selection.substring(0, 30) : selection;
+    // Get the full selection without limiting to 30 characters
+    return textarea.value.substring(start, end);
   };
 
   // Handle widget button click
   const handleWidgetButtonClick = (widget: string) => {
-    // Get selected text for widgets that use it
-    if (widget === 'alphabet' || widget === 'dictionary' || widget === 'zip' || widget === 'suffixes' || widget === 'brands') {
-      const text = getSelectedText();
+    // Get selected text for the widget
+    const text = getSelectedText();
+    if (text) {
       setSelectedText(text);
     }
     
     // Set the active widget
     setActiveWidget(widget);
     
+    // If it's the alphabet widget being opened via context menu,
+    // prevent auto-hiding
+    if (widget === 'alphabet' && selectedText) {
+      setPreventAutoHide(true);
+      // Reset preventAutoHide after a delay
+      setTimeout(() => setPreventAutoHide(false), 5000);
+    }
+    
     // Show widgets if they're hidden
     if (!showWidgets) {
       setShowWidgets(true);
-    } else if (activeWidget === widget && orientation === 'portrait') {
+    } else if (activeWidget === widget && orientation === 'portrait' && !preventAutoHide) {
       // Toggle off if clicking the same widget in portrait mode
+      // (but only if auto-hide is not prevented)
       setShowWidgets(false);
       // Return focus to the textarea when widgets are hidden
       textareaRef.current?.focus();
@@ -170,6 +182,9 @@ function App() {
           textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
           onContextMenuChange={setContextMenuOpen}
           onAddCard={addCard}
+          onToggleWidgets={toggleWidgets}
+          setActiveWidget={handleWidgetButtonClick}
+          setSelectedText={setSelectedText}
         />
         {(orientation === 'landscape' || showWidgets) && (
           <div 
@@ -186,6 +201,9 @@ function App() {
               selectedText={selectedText}
               cards={cards}
               onRemoveCard={removeCard}
+              onToggleWidgets={toggleWidgets}
+              setSelectedText={setSelectedText}
+              textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
             />
           </div>
         )}
