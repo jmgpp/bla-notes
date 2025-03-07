@@ -49,26 +49,28 @@ function WidgetsPanel({
   // Track previous card count to detect when cards are added
   const [prevCardCount, setPrevCardCount] = useState(cards.length);
 
-  // Add global escape key handler for portrait mode
-  const handleEscapeKey = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape' && orientation === 'portrait' && showWidgets && onToggleWidgets) {
-      e.preventDefault();
-      onToggleWidgets(false);
-    }
-  }, [orientation, showWidgets, onToggleWidgets]);
-
-  // Set up global Escape key handler
+  // Set up Escape key handler for portrait mode
   useEffect(() => {
-    if (orientation === 'portrait' && showWidgets && onToggleWidgets) {
-      // Add event listener
-      document.addEventListener('keydown', handleEscapeKey);
-      
-      // Clean up
-      return () => {
-        document.removeEventListener('keydown', handleEscapeKey);
-      };
+    // Only add the listener if in portrait mode, widgets are visible, and we have the toggle function
+    if (orientation !== 'portrait' || !showWidgets || !onToggleWidgets) {
+      return;
     }
-  }, [orientation, showWidgets, onToggleWidgets, handleEscapeKey]);
+    
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        // Close the widgets panel
+        onToggleWidgets(false);
+      }
+    };
+    
+    // Add global event listener
+    window.addEventListener('keydown', handleEscape);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [orientation, showWidgets, onToggleWidgets]);
 
   // Add function to truncate text
   const getTruncatedText = (text: string, maxLength: number) => {
@@ -166,14 +168,6 @@ function WidgetsPanel({
     // Update previous count
     setPrevCardCount(cards.length);
   }, [cards.length]);
-
-  // Handle keydown on the panel element
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && orientation === 'portrait' && showWidgets && onToggleWidgets) {
-      e.preventDefault();
-      onToggleWidgets(false);
-    }
-  };
 
   const panelClasses = `widgets-panel ${orientation} ${showWidgets ? 'visible' : 'hidden'} ${orientation === 'portrait' ? 'content-sized' : ''}`;
   
@@ -306,7 +300,7 @@ function WidgetsPanel({
   };
   
   return (
-    <div ref={panelRef} className={panelClasses} tabIndex={0} onKeyDown={handleKeyDown}>
+    <div ref={panelRef} className={panelClasses} tabIndex={-1}>
       {orientation === 'landscape' ? (
         <div className="card h-100">
           <div className="card-body d-flex flex-column">

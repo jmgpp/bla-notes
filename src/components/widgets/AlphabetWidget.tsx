@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './AlphabetWidget.scss';
 
 // NATO phonetic alphabet with simple recognizable words
@@ -112,16 +112,27 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
     );
   };
   
-  // Handle keyboard events
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && orientation === 'portrait' && onClose) {
-      e.preventDefault();
-      onClose();
+  useEffect(() => {
+    // Only add the listener in portrait mode and when onClose is provided
+    if (orientation !== 'portrait' || !onClose) {
+      return; // Don't set up the listener
     }
-  };
-  
+    
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [orientation, onClose]);
+
   return (
-    <div className={`alphabet-widget ${orientation}`} tabIndex={0} onKeyDown={handleKeyDown}>
+    <div className={`alphabet-widget ${orientation}`} tabIndex={-1}>
       {selectedText && getTextRepresentation(selectedText)}
       
       <div className={`alphabet-grid ${orientation}`}>
