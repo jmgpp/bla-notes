@@ -5,6 +5,7 @@ import DictionaryWidget from './widgets/DictionaryWidget';
 import ZipWidget from './widgets/ZipWidget';
 import SuffixesWidget from './widgets/SuffixesWidget';
 import BrandsWidget from './widgets/BrandsWidget';
+import DictionaryCard from './DictionaryCard';
 
 // Define DictionaryEntry interface
 interface DictionaryEntry {
@@ -127,87 +128,62 @@ function WidgetsPanel({
 
     return (
       <div className="cards-grid">
-        {cards.map(card => (
-          <div key={card.id} className="card-item">
-            <button 
-              className="close-button"
-              onClick={() => onRemoveCard(card.id)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            
-            {card.type === 'zip' && card.data.zipCode && (
-              <div className="zip-card">
-                <div className="zip-code">{card.data.zipCode}</div>
-                {card.data.city && card.data.state && (
-                  <div className="location">
-                    {card.data.city}, {card.data.state}
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {card.type === 'brand-snippet' && card.data.brandName && card.data.snippet && (
-              <div className="brand-snippet-card">
-                <div className="brand-name">{card.data.brandName}</div>
-                <div 
-                  className={`snippet-content ${expandedSnippets[card.id] ? 'expanded' : ''}`}
-                  onClick={() => toggleSnippetExpansion(card.id)}
-                >
-                  {expandedSnippets[card.id] 
-                    ? card.data.snippet 
-                    : getTruncatedText(card.data.snippet, 100)
-                  }
-                  <div className="expand-indicator">
-                    {expandedSnippets[card.id] ? '▲ Less' : '▼ More'}
-                  </div>
+        {cards.map(card => {
+          // Special case for dictionary cards - render them directly in the grid
+          if (card.type === 'dictionary' && card.data.searchTerm) {
+            return (
+              <DictionaryCard 
+                key={card.id}
+                searchTerm={card.data.searchTerm} 
+                results={card.data.dictionaryResults || null}
+                cardId={card.id}
+                onRemove={onRemoveCard}
+              />
+            );
+          }
+          
+          // All other card types with the standard card-item wrapper
+          return (
+            <div key={card.id} className="card-item">
+              <button 
+                className="close-button"
+                onClick={() => onRemoveCard(card.id)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              
+              {card.type === 'zip' && card.data.zipCode && (
+                <div className="zip-card">
+                  <div className="zip-code">{card.data.zipCode}</div>
+                  {card.data.city && card.data.state && (
+                    <div className="location">
+                      {card.data.city}, {card.data.state}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-            
-            {card.type === 'dictionary' && card.data.searchTerm && (
-              <div className="dictionary-card">
-                <div className="search-term">
-                  <span className="term">{card.data.searchTerm}</span>
-                </div>
-                
-                {card.data.dictionaryResults && card.data.dictionaryResults.length > 0 ? (
-                  <div className="results-container">
-                    {card.data.dictionaryResults.map((entry: DictionaryEntry, index: number) => (
-                      <div key={index} className="dictionary-entry">
-                        <div className="entry-term">{entry.term}</div>
-                        <div className="entry-definition">{entry.definition}</div>
-                        {entry.examples && entry.examples.length > 0 && (
-                          <div className="entry-examples">
-                            {entry.examples.map((example: string, i: number) => (
-                              <div key={i} className="example">"{example}"</div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="no-results">
-                    <p>No dictionary entries found for "{card.data.searchTerm}"</p>
-                    <div className="external-search-buttons">
-                      <button onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(card.data.searchTerm)}`, '_blank')} className="search-button google">
-                        Search Google
-                      </button>
-                      <button onClick={() => window.open(`https://translate.google.com/?sl=auto&tl=es&text=${encodeURIComponent(card.data.searchTerm)}`, '_blank')} className="search-button translate">
-                        Translate
-                      </button>
-                      <button onClick={() => window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(card.data.searchTerm)}`, '_blank')} className="search-button webster">
-                        Merriam-Webster
-                      </button>
+              )}
+              
+              {card.type === 'brand-snippet' && card.data.brandName && card.data.snippet && (
+                <div className="brand-snippet-card">
+                  <div className="brand-name">{card.data.brandName}</div>
+                  <div 
+                    className={`snippet-content ${expandedSnippets[card.id] ? 'expanded' : ''}`}
+                    onClick={() => toggleSnippetExpansion(card.id)}
+                  >
+                    {expandedSnippets[card.id] 
+                      ? card.data.snippet 
+                      : getTruncatedText(card.data.snippet, 100)
+                    }
+                    <div className="expand-indicator">
+                      {expandedSnippets[card.id] ? '▲ Less' : '▼ More'}
                     </div>
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };

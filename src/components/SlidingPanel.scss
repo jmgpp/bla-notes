@@ -88,6 +88,50 @@
         }
       }
       
+      .toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      
+      .fix-toggle {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border-radius: 50%;
+        background-color: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        &.active {
+          background-color: rgba(92, 124, 250, 0.1);
+          
+          .fix-icon {
+            opacity: 1;
+          }
+        }
+        
+        .fix-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0.75; /* Slightly increased from 0.6 for better visibility */
+          transition: all 0.2s ease;
+          
+          svg {
+            transition: all 0.2s ease;
+          }
+        }
+      }
+      
       .toggle-button {
         background-color: transparent;
         border: none;
@@ -210,6 +254,9 @@
   // Temporary background colors for visualization
   .cards-content {
     padding: 5px;
+    max-height: 100%; /* Ensure it doesn't exceed parent height */
+    overflow-y: auto !important; /* Force overflow scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     
     .empty-cards-message {
       display: flex;
@@ -234,6 +281,13 @@
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 8px;
       padding: 4px 0;
+      width: 100%;
+      
+      .card-wrapper {
+        width: 100%;
+        display: block;
+        scroll-margin-bottom: 20px; /* Adds margin for scrollIntoView */
+      }
       
       .card-item {
         position: relative;
@@ -243,6 +297,7 @@
         background-color: white;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
+        scroll-margin-bottom: 20px; /* Adds margin for scrollIntoView */
         
         &:hover {
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -367,5 +422,12 @@
         color: #495057;
       }
     }
+  }
+}
+
+// Update the card-item styling to ensure dictionary cards look the same in both orientations
+.cards-grid .card-item {
+  &.dictionary-card-container {
+    // Removed redundant styles
   }
 } 
