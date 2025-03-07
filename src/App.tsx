@@ -6,6 +6,22 @@ import NotesPanel from './components/NotesPanel'
 import WidgetsPanel from './components/WidgetsPanel'
 import SlidingPanel from './components/SlidingPanel'
 
+// Define types for card data
+interface CardData {
+  id: string;
+  type: 'zip' | 'brand-snippet' | 'dictionary';
+  data: {
+    zipCode?: string;
+    city?: string;
+    state?: string;
+    brandName?: string;
+    snippet?: string;
+    category?: string;
+    searchTerm?: string;
+    dictionaryResults?: any[]; // Dictionary search results
+  };
+}
+
 function App() {
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>(
     window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
@@ -13,6 +29,8 @@ function App() {
   const [showWidgets, setShowWidgets] = useState(orientation === 'landscape')
   const [activeWidget, setActiveWidget] = useState('alphabet')
   const [selectedText, setSelectedText] = useState<string>('')
+  const [contextMenuOpen, setContextMenuOpen] = useState(false)
+  const [cards, setCards] = useState<CardData[]>([])
   const widgetsPanelRef = useRef<HTMLDivElement>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const appContainerRef = useRef<HTMLDivElement>(null)
@@ -31,6 +49,9 @@ function App() {
         // In landscape, widgets panel is always visible
         if (newOrientation === 'landscape') {
           setShowWidgets(true)
+        } else {
+          // In portrait, widgets panel is hidden by default
+          setShowWidgets(false)
         }
       }
     }
@@ -42,6 +63,16 @@ function App() {
   const toggleWidgets = () => {
     setShowWidgets(!showWidgets)
   }
+
+  // Methods for cards management
+  const addCard = (card: Omit<CardData, 'id'>) => {
+    const id = Date.now().toString(); // Generate a unique ID
+    setCards(prev => [...prev, { ...card, id }]);
+  };
+
+  const removeCard = (id: string) => {
+    setCards(prev => prev.filter(card => card.id !== id));
+  };
 
   // Handle mouse leave for widgets panel in portrait mode
   const handleMouseLeave = (e: React.MouseEvent) => {
@@ -137,6 +168,8 @@ function App() {
           orientation={orientation} 
           showWidgets={showWidgets} 
           textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
+          onContextMenuChange={setContextMenuOpen}
+          onAddCard={addCard}
         />
         {(orientation === 'landscape' || showWidgets) && (
           <div 
@@ -151,14 +184,21 @@ function App() {
               activeWidget={activeWidget}
               setActiveWidget={handleWidgetButtonClick}
               selectedText={selectedText}
+              cards={cards}
+              onRemoveCard={removeCard}
             />
           </div>
         )}
       </div>
       
-      {/* Always render the SlidingPanel in portrait mode */}
-      {orientation === 'portrait' && <SlidingPanel orientation={orientation} textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>} />}
-      {orientation === 'landscape' && <SlidingPanel orientation={orientation} textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>} />}
+      {/* Only render the SlidingPanel in portrait mode */}
+      {orientation === 'portrait' && <SlidingPanel 
+        orientation={orientation} 
+        textareaRef={textareaRef as React.RefObject<HTMLTextAreaElement>}
+        contextMenuOpen={contextMenuOpen}
+        cards={cards}
+        onRemoveCard={removeCard}
+      />}
     </div>
   )
 }

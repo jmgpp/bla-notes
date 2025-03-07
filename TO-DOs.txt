@@ -1,0 +1,12 @@
+-alt+enter menu
+    -acts on current word or selected text
+    - dictionary / zip
+    -personalized commands
+-discord integration
+    -common and personalized actions
+-import/export datasets
+-user CRUD
+-diagrams
+-snippets panel
+    -all snippets and filters
+    -favorites

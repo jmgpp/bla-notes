@@ -1,11 +1,17 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './WidgetsPanel.scss';
 import AlphabetWidget from './widgets/AlphabetWidget';
 import DictionaryWidget from './widgets/DictionaryWidget';
 import ZipWidget from './widgets/ZipWidget';
 import SuffixesWidget from './widgets/SuffixesWidget';
 import BrandsWidget from './widgets/BrandsWidget';
-import SlidingPanel from './SlidingPanel';
+
+// Define DictionaryEntry interface
+interface DictionaryEntry {
+  term: string;
+  definition: string;
+  examples?: string[];
+}
 
 interface WidgetsPanelProps {
   orientation: 'landscape' | 'portrait';
@@ -13,11 +19,37 @@ interface WidgetsPanelProps {
   activeWidget: string;
   setActiveWidget: (widget: string) => void;
   selectedText?: string;
+  cards?: any[];
+  onRemoveCard?: (id: string) => void;
 }
 
-function WidgetsPanel({ orientation, showWidgets, activeWidget, setActiveWidget, selectedText }: WidgetsPanelProps) {
+function WidgetsPanel({ 
+  orientation, 
+  showWidgets, 
+  activeWidget, 
+  setActiveWidget, 
+  selectedText,
+  cards = [],
+  onRemoveCard = () => {}
+}: WidgetsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [activeLowerTab, setActiveLowerTab] = useState<'cards' | 'diagrams'>('cards');
+  const [expandedSnippets, setExpandedSnippets] = useState<Record<string, boolean>>({});
   
+  // Add function to toggle snippet expansion
+  const toggleSnippetExpansion = (cardId: string) => {
+    setExpandedSnippets(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
+  };
+  
+  // Add function to truncate text
+  const getTruncatedText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
   useEffect(() => {
     if (!panelRef.current) return;
     
@@ -82,47 +114,178 @@ function WidgetsPanel({ orientation, showWidgets, activeWidget, setActiveWidget,
         return null;
     }
   };
+
+  // Updated renderCardsContent to match SlidingPanel
+  const renderCardsContent = () => {
+    if (!cards || cards.length === 0) {
+      return (
+        <div className="empty-cards-message">
+          <p>No cards yet. Try using the <code>#zip12345</code> command in your notes or select a word and use Alt+Space to search.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="cards-grid">
+        {cards.map(card => (
+          <div key={card.id} className="card-item">
+            <button 
+              className="close-button"
+              onClick={() => onRemoveCard(card.id)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            
+            {card.type === 'zip' && card.data.zipCode && (
+              <div className="zip-card">
+                <div className="zip-code">{card.data.zipCode}</div>
+                {card.data.city && card.data.state && (
+                  <div className="location">
+                    {card.data.city}, {card.data.state}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {card.type === 'brand-snippet' && card.data.brandName && card.data.snippet && (
+              <div className="brand-snippet-card">
+                <div className="brand-name">{card.data.brandName}</div>
+                <div 
+                  className={`snippet-content ${expandedSnippets[card.id] ? 'expanded' : ''}`}
+                  onClick={() => toggleSnippetExpansion(card.id)}
+                >
+                  {expandedSnippets[card.id] 
+                    ? card.data.snippet 
+                    : getTruncatedText(card.data.snippet, 100)
+                  }
+                  <div className="expand-indicator">
+                    {expandedSnippets[card.id] ? '▲ Less' : '▼ More'}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {card.type === 'dictionary' && card.data.searchTerm && (
+              <div className="dictionary-card">
+                <div className="search-term">
+                  <span className="term">{card.data.searchTerm}</span>
+                </div>
+                
+                {card.data.dictionaryResults && card.data.dictionaryResults.length > 0 ? (
+                  <div className="results-container">
+                    {card.data.dictionaryResults.map((entry: DictionaryEntry, index: number) => (
+                      <div key={index} className="dictionary-entry">
+                        <div className="entry-term">{entry.term}</div>
+                        <div className="entry-definition">{entry.definition}</div>
+                        {entry.examples && entry.examples.length > 0 && (
+                          <div className="entry-examples">
+                            {entry.examples.map((example: string, i: number) => (
+                              <div key={i} className="example">"{example}"</div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-results">
+                    <p>No dictionary entries found for "{card.data.searchTerm}"</p>
+                    <div className="external-search-buttons">
+                      <button onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(card.data.searchTerm)}`, '_blank')} className="search-button google">
+                        Search Google
+                      </button>
+                      <button onClick={() => window.open(`https://translate.google.com/?sl=auto&tl=es&text=${encodeURIComponent(card.data.searchTerm)}`, '_blank')} className="search-button translate">
+                        Translate
+                      </button>
+                      <button onClick={() => window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(card.data.searchTerm)}`, '_blank')} className="search-button webster">
+                        Merriam-Webster
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Render Diagrams panel content (placeholder)
+  const renderDiagramsContent = () => {
+    return (
+      <div className="diagrams-content">
+        <h4>Diagrams Panel</h4>
+        <p>This is placeholder content for the Diagrams panel.</p>
+        <p>You would typically see your diagrams content here.</p>
+      </div>
+    );
+  };
   
   return (
     <div ref={panelRef} className={panelClasses} tabIndex={-1}>
       {orientation === 'landscape' ? (
         <div className="card h-100">
           <div className="card-body d-flex flex-column">
-            <div className="widget-tabs">
-              {/* Tab buttons */}
-              <button
-                className={`tab-button ${activeWidget === 'alphabet' ? 'active' : ''}`}
-                onClick={() => setActiveWidget('alphabet')}
-              >
-                Alphabet
-              </button>
-              <button
-                className={`tab-button ${activeWidget === 'dictionary' ? 'active' : ''}`}
-                onClick={() => setActiveWidget('dictionary')}
-              >
-                Dictionary
-              </button>
-              <button
-                className={`tab-button ${activeWidget === 'zip' ? 'active' : ''}`}
-                onClick={() => setActiveWidget('zip')}
-              >
-                ZIP
-              </button>
-              <button
-                className={`tab-button ${activeWidget === 'suffixes' ? 'active' : ''}`}
-                onClick={() => setActiveWidget('suffixes')}
-              >
-                Suffixes
-              </button>
+            {/* Upper section - Widget Tabs */}
+            <div className="upper-section">
+              <div className="widget-tabs">
+                {/* Tab buttons */}
+                <button
+                  className={`tab-button ${activeWidget === 'alphabet' ? 'active' : ''}`}
+                  onClick={() => setActiveWidget('alphabet')}
+                >
+                  Alphabet
+                </button>
+                <button
+                  className={`tab-button ${activeWidget === 'dictionary' ? 'active' : ''}`}
+                  onClick={() => setActiveWidget('dictionary')}
+                >
+                  Dictionary
+                </button>
+                <button
+                  className={`tab-button ${activeWidget === 'zip' ? 'active' : ''}`}
+                  onClick={() => setActiveWidget('zip')}
+                >
+                  ZIP
+                </button>
+                <button
+                  className={`tab-button ${activeWidget === 'suffixes' ? 'active' : ''}`}
+                  onClick={() => setActiveWidget('suffixes')}
+                >
+                  Suffixes
+                </button>
+              </div>
+              
+              {/* Widget content */}
+              <div className="widget-content">
+                {renderWidgetContent()}
+              </div>
             </div>
             
-            {/* Widget content */}
-            <div className="widget-content flex-grow-1">
-              {renderWidgetContent()}
+            {/* Lower section - Cards and Diagrams */}
+            <div className="lower-section">
+              <div className="lower-tabs">
+                <button
+                  className={`tab-button ${activeLowerTab === 'cards' ? 'active' : ''}`}
+                  onClick={() => setActiveLowerTab('cards')}
+                >
+                  Cards
+                </button>
+                <button
+                  className={`tab-button ${activeLowerTab === 'diagrams' ? 'active' : ''}`}
+                  onClick={() => setActiveLowerTab('diagrams')}
+                >
+                  Diagrams
+                </button>
+              </div>
+              
+              {/* Lower content */}
+              <div className="lower-content">
+                {activeLowerTab === 'cards' ? renderCardsContent() : renderDiagramsContent()}
+              </div>
             </div>
-
-            {/* Sliding Panel only in landscape mode */}
-            <SlidingPanel orientation={orientation} />
           </div>
         </div>
       ) : (

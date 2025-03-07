@@ -199,22 +199,97 @@
 
   .tab-content {
     flex: 1;
-    padding: 1rem;
+    padding: 0.5rem;
     overflow-y: auto;
     background-color: white;
-    border-radius: 4px;
-    margin: 0 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    margin: 0 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
   // Temporary background colors for visualization
   .cards-content {
-    background-color: rgba(255, 200, 200, 0.3); // Light red
-    min-height: 100px;
-    padding: 10px;
-    border-radius: 4px;
-    margin-top: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 5px;
+    
+    .empty-cards-message {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      min-height: 80px;
+      color: #8c8c8c;
+      text-align: center;
+      font-size: 13px;
+      
+      code {
+        background-color: #f8f9fa;
+        padding: 1px 3px;
+        border-radius: 2px;
+        color: #e83e8c;
+      }
+    }
+    
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+      padding: 4px 0;
+      
+      .card-item {
+        position: relative;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 8px;
+        background-color: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+        
+        &:hover {
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          transform: translateY(-1px);
+        }
+        
+        .close-button {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background-color: rgba(0, 0, 0, 0.05);
+          border: none;
+          color: #6c757d;
+          font-size: 12px;
+          line-height: 1;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          z-index: 2;
+          
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #dc3545;
+          }
+        }
+        
+        // ZIP card specific styles
+        .zip-card {
+          .zip-code {
+            font-size: 18px;
+            font-weight: 600;
+            color: #5c7cfa;
+            margin-bottom: 6px;
+          }
+          
+          .location {
+            font-size: 13px;
+            color: #495057;
+          }
+        }
+      }
+    }
   }
   
   .diagrams-content {
@@ -224,5 +299,73 @@
     border-radius: 4px;
     margin-top: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  }
+}
+
+// Brand snippet card styles
+.brand-snippet-card {
+  .brand-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: #5c7cfa;
+    margin-bottom: 3px;
+    margin-right: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .snippet-content {
+    position: relative;
+    font-size: 13px;
+    line-height: 1.35;
+    color: #495057;
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 0;
+    
+    &:hover {
+      background-color: transparent;
+    }
+    
+    &.expanded {
+      max-height: none;
+      white-space: normal;
+      overflow: visible;
+    }
+    
+    &:not(.expanded) {
+      max-height: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: pre-wrap;
+    }
+    
+    .expand-indicator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      top: 2px;
+      font-size: 10px;
+      color: #8c8c8c;
+      height: 16px;
+      margin-bottom: -2px;
+      
+      &:hover {
+        color: #495057;
+      }
+    }
   }
 } 

@@ -1,13 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './NotesPanel.scss';
 import CommandSuggestions from './CommandSuggestions';
-import CommandResults from './CommandResults';
+import ContextMenu from './ContextMenu';
 import { brands, Brand } from '../data/brands';
+import dictionaryData from '../data/dictionary.json';
 
 interface NotesPanelProps {
   orientation: string;
   showWidgets: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
+  onContextMenuChange: (isOpen: boolean) => void;
+  onAddCard: (card: { 
+    type: 'zip' | 'brand-snippet' | 'dictionary',
+    data: {
+      zipCode?: string;
+      city?: string;
+      state?: string;
+      brandName?: string;
+      snippet?: string;
+      category?: string;
+      searchTerm?: string;
+      dictionaryResults?: any[];
+    }
+  }) => void;
 }
 
 const PLACEHOLDER_COMMANDS = [
@@ -61,16 +76,57 @@ interface Command {
   syntax: string;
 }
 
-const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, textareaRef }) => {
+// Updated dictionary search function to use dictionary.json
+const searchDictionary = (query: string) => {
+  if (!query || query.trim() === '') return null;
+  
+  const normalizedQuery = query.toLowerCase().trim();
+  const terms = dictionaryData.terms as Array<{
+    id: string;
+    categoryId: number;
+    subcategoryId: number;
+    englishTerm: string;
+    spanishTerm: string;
+    notes: string;
+    tags: string[];
+  }>;
+  
+  // Search in English terms, Spanish terms, and notes
+  const results = terms.filter(term => 
+    term.englishTerm.toLowerCase().includes(normalizedQuery) ||
+    term.spanishTerm.toLowerCase().includes(normalizedQuery) ||
+    term.notes.toLowerCase().includes(normalizedQuery)
+  );
+  
+  return results.length > 0 ? results.map(term => ({
+    term: term.englishTerm,
+    definition: term.spanishTerm,
+    examples: term.notes ? [term.notes] : undefined
+  })) : null;
+};
+
+const NotesPanel: React.FC<NotesPanelProps> = ({ 
+  orientation, 
+  showWidgets, 
+  textareaRef, 
+  onContextMenuChange,
+  onAddCard 
+}) => {
   const [suggestionsPosition, setSuggestionsPosition] = useState<{ top: number; left: number } | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [commandFilter, setCommandFilter] = useState('');
   const [suggestionType, setSuggestionType] = useState<'command' | 'brand'>('command');
-  const [commandResults, setCommandResults] = useState<Array<{ type: 'zip', data: { zipCode: string; city: string; state: string; } }>>([]);
   const commandStartPosRef = useRef<number>(-1);
   const currentCommandRef = useRef<string | null>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // New state variables for context menu
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ top: number; left: number } | null>(null);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuIndex, setContextMenuIndex] = useState(0);
+  const [contextMenuSelectedText, setContextMenuSelectedText] = useState('');
+  const contextMenuRef = useRef<HTMLDivElement>(null);
 
   // Focus the textarea when the component mounts
   useEffect(() => {
@@ -96,7 +152,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
         textareaRef.current && 
         !textareaRef.current.contains(event.target as Node)
       ) {
-        setShowSuggestions(false);
+        updateShowSuggestions(false);
       }
     }
 
@@ -108,6 +164,11 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showSuggestions, textareaRef]);
+
+  // Notify parent component when either suggestions or context menu state changes
+  useEffect(() => {
+    onContextMenuChange(showSuggestions || showContextMenu);
+  }, [showSuggestions, showContextMenu, onContextMenuChange]);
 
   const getCursorCoordinates = (textarea: HTMLTextAreaElement, cursorPosition: number): { top: number; left: number } | null => {
     // Create a mirror div to measure text
@@ -172,6 +233,53 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Alt+Space (or Option+Space on Mac) to show context menu
+    if ((e.altKey) && e.code === 'Space') {
+      e.preventDefault();
+      const textarea = e.currentTarget;
+      const cursorPosition = textarea.selectionStart;
+      
+      // Get selected text or word at cursor
+      const text = textarea.value;
+      const selectedText = textarea.selectionStart !== textarea.selectionEnd 
+        ? text.substring(textarea.selectionStart, textarea.selectionEnd)
+        : getWordAtPosition(text, cursorPosition);
+        
+      setContextMenuSelectedText(selectedText);
+      
+      // Show context menu at cursor position
+      const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
+      if (cursorCoords) {
+        setContextMenuPosition(cursorCoords);
+        setShowContextMenu(true);
+        setContextMenuIndex(0);
+      }
+      return;
+    }
+    
+    // Handle keys when context menu is open
+    if (showContextMenu) {
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setContextMenuIndex(prev => (prev + 1) % 5); // 5 is the number of context menu options
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setContextMenuIndex(prev => (prev - 1 + 5) % 5); // 5 is the number of context menu options
+          break;
+        case 'Enter':
+          e.preventDefault();
+          handleContextMenuSelect(['google', 'translate', 'webster', 'dictionary'][contextMenuIndex]);
+          break;
+        case 'Escape':
+          e.preventDefault();
+          setShowContextMenu(false);
+          break;
+      }
+      return;
+    }
+    
     // Handle Ctrl/Cmd + Space
     if ((e.metaKey || e.ctrlKey) && e.code === 'Space') {
       e.preventDefault();
@@ -198,7 +306,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
       if (cursorCoords) {
         setSuggestionsPosition(cursorCoords);
-        setShowSuggestions(true);
+        updateShowSuggestions(true);
         setSelectedIndex(0);
         setCommandFilter(currentWord);
         setSuggestionType('brand');
@@ -234,7 +342,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
         break;
       case 'Escape':
         e.preventDefault();
-        setShowSuggestions(false);
+        updateShowSuggestions(false);
         break;
     }
   };
@@ -267,7 +375,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
 
       // Hide suggestions if we've typed a space
       if (currentWord.includes(' ')) {
-        setShowSuggestions(false);
+        updateShowSuggestions(false);
       }
       return;
     }
@@ -293,16 +401,23 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
         const zipCode = commandText.substring(3);
         lookupZipCode(zipCode)
           .then(zipData => {
-            setCommandResults(prev => [...prev, { type: 'zip', data: zipData }]);
+            onAddCard({
+              type: 'zip',
+              data: {
+                zipCode: zipData.zipCode,
+                city: zipData.city,
+                state: zipData.state
+              }
+            });
             currentCommandRef.current = null;
             commandStartPosRef.current = -1;
-            setShowSuggestions(false);
+            updateShowSuggestions(false);
           })
           .catch(err => {
             console.error('Failed to lookup ZIP:', err);
             // Optionally show an error message to the user
           });
-        setShowSuggestions(false);
+        updateShowSuggestions(false);
         return;
       }
       
@@ -310,13 +425,13 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       const cursorCoords = getCursorCoordinates(textarea, cursorPosition);
       if (cursorCoords) {
         setSuggestionsPosition(cursorCoords);
-        setShowSuggestions(true);
+        updateShowSuggestions(true);
         setSelectedIndex(0);
       }
     } else {
       // Only hide suggestions if we're in command mode
       if (suggestionType === 'command') {
-        setShowSuggestions(false);
+        updateShowSuggestions(false);
       }
     }
   };
@@ -338,7 +453,21 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
     textarea.selectionStart = newCursorPos;
     textarea.selectionEnd = newCursorPos;
     
-    setShowSuggestions(false);
+    // Check if the brand has snippets and create cards for each one
+    if (brand.snippets && brand.snippets.length > 0) {
+      brand.snippets.forEach(snippet => {
+        onAddCard({
+          type: 'brand-snippet',
+          data: {
+            brandName: brand.name,
+            snippet: snippet,
+            category: brand.category
+          }
+        });
+      });
+    }
+    
+    updateShowSuggestions(false);
     textarea.focus();
   };
 
@@ -359,13 +488,9 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
     textarea.selectionStart = newCursorPos;
     textarea.selectionEnd = newCursorPos;
     
-    setShowSuggestions(false);
+    updateShowSuggestions(false);
     currentCommandRef.current = command;
     textarea.focus();
-  };
-
-  const handleDismissResult = (index: number) => {
-    setCommandResults(prev => prev.filter((_, i) => i !== index));
   };
 
   // Handle clicks on the panel to ensure focus stays in the textarea
@@ -378,8 +503,10 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
   // Handle clicks in the textarea that might change cursor position
   const handleTextareaClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     if (showSuggestions) {
-      // Close suggestions when clicking in the textarea
-      setShowSuggestions(false);
+      updateShowSuggestions(false);
+    }
+    if (showContextMenu) {
+      setShowContextMenu(false);
     }
   };
 
@@ -393,11 +520,111 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
       // close the suggestions panel
       if (commandStartPosRef.current !== -1 && 
           Math.abs(currentSelectionStart - commandStartPosRef.current) > 1) {
-        setShowSuggestions(false);
+        updateShowSuggestions(false);
         commandStartPosRef.current = -1;
       }
     }
+    
+    // Auto-show context menu when text is selected
+    // Uncomment if you want the context menu to appear automatically on selection
+    /*
+    const textarea = e.currentTarget;
+    if (textarea.selectionStart !== textarea.selectionEnd) {
+      const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+      if (selectedText.length > 0) {
+        setContextMenuSelectedText(selectedText);
+        const cursorCoords = getCursorCoordinates(textarea, textarea.selectionEnd);
+        if (cursorCoords) {
+          setContextMenuPosition(cursorCoords);
+          setShowContextMenu(true);
+          setContextMenuIndex(0);
+        }
+      }
+    } else {
+      setShowContextMenu(false);
+    }
+    */
   };
+
+  // Update the existing setShowSuggestions calls to also notify the parent
+  const updateShowSuggestions = (value: boolean) => {
+    setShowSuggestions(value);
+  };
+
+  // Function to get word at cursor position
+  const getWordAtPosition = (text: string, position: number): string => {
+    let startPos = position;
+    let endPos = position;
+    
+    // Find word boundaries
+    while (startPos > 0 && /[\w\-']/.test(text[startPos - 1])) {
+      startPos--;
+    }
+    
+    while (endPos < text.length && /[\w\-']/.test(text[endPos])) {
+      endPos++;
+    }
+    
+    return text.substring(startPos, endPos);
+  };
+
+  // Handler for context menu option selection
+  const handleContextMenuSelect = (action: string) => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    
+    // Perform different actions based on selection
+    switch(action) {
+      case 'google':
+        // Open search for the selected text
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(contextMenuSelectedText)}`, '_blank');
+        break;
+      case 'translate':
+        // Open Google Translate
+        window.open(`https://translate.google.com/?sl=auto&tl=es&text=${encodeURIComponent(contextMenuSelectedText)}`, '_blank');
+        break;
+      case 'webster':
+        // Open dictionary definition
+        window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(contextMenuSelectedText)}`, '_blank');
+        break;
+      case 'dictionary':
+        // Search internal dictionary and create a dictionary card
+        const results = searchDictionary(contextMenuSelectedText);
+        onAddCard({
+          type: 'dictionary',
+          data: {
+            searchTerm: contextMenuSelectedText,
+            dictionaryResults: results || []
+          }
+        });
+        break;
+    }
+    
+    setShowContextMenu(false);
+    textarea.focus();
+  };
+
+  // Add click outside handler for context menu
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        showContextMenu &&
+        contextMenuRef.current && 
+        !contextMenuRef.current.contains(event.target as Node) &&
+        textareaRef.current && 
+        !textareaRef.current.contains(event.target as Node)
+      ) {
+        setShowContextMenu(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showContextMenu, textareaRef]);
 
   return (
     <div 
@@ -410,7 +637,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
           <textarea 
             ref={textareaRef}
             className="notes-area" 
-            placeholder="Take your notes here... Press Ctrl/Cmd+Space for brand suggestions"
+            placeholder="Take your notes here... Press Ctrl/Cmd+Space for brand suggestions or Alt/Option+Space for context menu"
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
             onClick={handleTextareaClick}
@@ -432,9 +659,13 @@ const NotesPanel: React.FC<NotesPanelProps> = ({ orientation, showWidgets, texta
             type={suggestionType}
             ref={suggestionsRef}
           />
-          <CommandResults
-            results={commandResults}
-            onDismiss={handleDismissResult}
+          <ContextMenu
+            position={contextMenuPosition}
+            visible={showContextMenu}
+            selectedText={contextMenuSelectedText}
+            selectedIndex={contextMenuIndex}
+            onSelect={handleContextMenuSelect}
+            ref={contextMenuRef}
           />
         </div>
       </div>

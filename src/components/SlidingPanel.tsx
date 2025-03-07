@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import './SlidingPanel.scss';
+import DictionaryCard from './DictionaryCard';
+import { DictionaryEntry } from '../data/dictionary';
+
+interface CardData {
+  id: string;
+  type: 'zip' | 'brand-snippet' | 'dictionary';
+  data: {
+    zipCode?: string;
+    city?: string;
+    state?: string;
+    brandName?: string;
+    snippet?: string;
+    category?: string;
+    searchTerm?: string;
+    dictionaryResults?: DictionaryEntry[];
+  };
+}
 
 interface SlidingPanelProps {
   orientation: 'landscape' | 'portrait';
   textareaRef: React.RefObject<HTMLTextAreaElement>;
+  contextMenuOpen?: boolean;
+  cards?: CardData[];
+  onRemoveCard?: (id: string) => void;
 }
 
-const SlidingPanel: React.FC<SlidingPanelProps> = ({ orientation, textareaRef }) => {
+const SlidingPanel: React.FC<SlidingPanelProps> = ({ 
+  orientation, 
+  textareaRef, 
+  contextMenuOpen = false,
+  cards = [],
+  onRemoveCard = () => {}
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'cards' | 'diagrams'>('cards');
+  const [expandedSnippets, setExpandedSnippets] = useState<Record<string, boolean>>({});
 
   const togglePanel = () => {
     setIsExpanded(!isExpanded);
@@ -26,6 +53,22 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({ orientation, textareaRef })
     // Focus the textarea after changing the tab
     setTimeout(() => textareaRef.current?.focus(), 0);
   };
+
+  // Handle Escape key to collapse panel in portrait mode (only if no contextual menus are open)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only collapse in portrait mode, only when expanded, and only when no contextual menus are open
+      if (orientation === 'portrait' && isExpanded && !contextMenuOpen && e.key === 'Escape') {
+        setIsExpanded(false);
+        textareaRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [orientation, isExpanded, contextMenuOpen, textareaRef]);
 
   useEffect(() => {
     if (orientation === 'portrait') {
@@ -48,6 +91,83 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({ orientation, textareaRef })
       }
     }
   }, [isExpanded, orientation]);
+
+  // Toggle snippet expansion
+  const toggleSnippetExpansion = (cardId: string) => {
+    setExpandedSnippets(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
+  };
+
+  // Helper to get truncated text
+  const getTruncatedText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  // Render cards in a grid layout
+  const renderCards = () => {
+    if (!cards || cards.length === 0) {
+      return (
+        <div className="empty-cards-message">
+          <p>No cards yet. Try using the <code>#zip12345</code> command in your notes or select a word and use Alt+Space to search.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="cards-grid">
+        {cards.map(card => (
+          <div key={card.id} className="card-item">
+            <button 
+              className="close-button"
+              onClick={() => onRemoveCard(card.id)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            
+            {card.type === 'zip' && card.data.zipCode && (
+              <div className="zip-card">
+                <div className="zip-code">{card.data.zipCode}</div>
+                {card.data.city && card.data.state && (
+                  <div className="location">
+                    {card.data.city}, {card.data.state}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {card.type === 'brand-snippet' && card.data.brandName && card.data.snippet && (
+              <div className="brand-snippet-card">
+                <div className="brand-name">{card.data.brandName}</div>
+                <div 
+                  className={`snippet-content ${expandedSnippets[card.id] ? 'expanded' : ''}`}
+                  onClick={() => toggleSnippetExpansion(card.id)}
+                >
+                  {expandedSnippets[card.id] 
+                    ? card.data.snippet 
+                    : getTruncatedText(card.data.snippet, 100)
+                  }
+                  <div className="expand-indicator">
+                    {expandedSnippets[card.id] ? '▲ Less' : '▼ More'}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {card.type === 'dictionary' && card.data.searchTerm && (
+              <DictionaryCard 
+                searchTerm={card.data.searchTerm} 
+                results={card.data.dictionaryResults || null} 
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className={`sliding-panel ${orientation} ${isExpanded ? 'expanded' : ''}`}>
@@ -78,9 +198,7 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({ orientation, textareaRef })
             <div className="tab-content">
               {activeTab === 'cards' ? (
                 <div className="cards-content">
-                  <h4>Cards Panel</h4>
-                  <p>This is placeholder content for the Cards panel. It has a light red background for visualization.</p>
-                  <p>You would typically see your cards content here.</p>
+                  {renderCards()}
                 </div>
               ) : (
                 <div className="diagrams-content">
@@ -112,9 +230,7 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({ orientation, textareaRef })
             <div className="tab-content">
               {activeTab === 'cards' ? (
                 <div className="cards-content">
-                  <h4>Cards Panel</h4>
-                  <p>This is placeholder content for the Cards panel. It has a light red background for visualization.</p>
-                  <p>You would typically see your cards content here.</p>
+                  {renderCards()}
                 </div>
               ) : (
                 <div className="diagrams-content">
