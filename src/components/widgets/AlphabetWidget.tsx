@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './AlphabetWidget.scss';
 
 // NATO phonetic alphabet with simple recognizable words
@@ -96,6 +96,26 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
       </div>
     );
   };
+  
+  // Add Escape key handler for portrait mode
+  useEffect(() => {
+    // Only set up the handler if we're in portrait mode and onClose is provided
+    if (orientation !== 'portrait' || !onClose) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    
+    // Add event listener
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [orientation, onClose]);
   
   // Render close button only in portrait mode
   const renderCloseButton = () => {
