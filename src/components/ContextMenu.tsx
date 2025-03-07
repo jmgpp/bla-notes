@@ -30,7 +30,10 @@ interface ContextMenuProps {
 
 // Determine the recommended option based on the selected text
 export const getRecommendedOptionIndex = (text: string): number => {
-  if (!text.trim()) return CONTEXT_OPTIONS.findIndex(option => option.id === 'google'); // Default to Google search if empty
+  // If no text is selected, return the index of the Google option (which is 0)
+  if (!text || !text.trim()) {
+    return 0; // Google is the first option (index 0)
+  }
   
   // For 5-digit numbers, recommend ZIP lookup
   if (/^\d{5}$/.test(text.trim())) {

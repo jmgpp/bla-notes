@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useLayoutEffect } from 'react';
+import React, { useRef, useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import './WidgetsPanel.scss';
 import AlphabetWidget from './widgets/AlphabetWidget';
 import DictionaryWidget from './widgets/DictionaryWidget';
@@ -48,6 +48,27 @@ function WidgetsPanel({
 
   // Track previous card count to detect when cards are added
   const [prevCardCount, setPrevCardCount] = useState(cards.length);
+
+  // Add global escape key handler for portrait mode
+  const handleEscapeKey = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && orientation === 'portrait' && showWidgets && onToggleWidgets) {
+      e.preventDefault();
+      onToggleWidgets(false);
+    }
+  }, [orientation, showWidgets, onToggleWidgets]);
+
+  // Set up global Escape key handler
+  useEffect(() => {
+    if (orientation === 'portrait' && showWidgets && onToggleWidgets) {
+      // Add event listener
+      document.addEventListener('keydown', handleEscapeKey);
+      
+      // Clean up
+      return () => {
+        document.removeEventListener('keydown', handleEscapeKey);
+      };
+    }
+  }, [orientation, showWidgets, onToggleWidgets, handleEscapeKey]);
 
   // Add function to truncate text
   const getTruncatedText = (text: string, maxLength: number) => {
@@ -145,6 +166,14 @@ function WidgetsPanel({
     // Update previous count
     setPrevCardCount(cards.length);
   }, [cards.length]);
+
+  // Handle keydown on the panel element
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && orientation === 'portrait' && showWidgets && onToggleWidgets) {
+      e.preventDefault();
+      onToggleWidgets(false);
+    }
+  };
 
   const panelClasses = `widgets-panel ${orientation} ${showWidgets ? 'visible' : 'hidden'} ${orientation === 'portrait' ? 'content-sized' : ''}`;
   
@@ -277,7 +306,7 @@ function WidgetsPanel({
   };
   
   return (
-    <div ref={panelRef} className={panelClasses} tabIndex={-1}>
+    <div ref={panelRef} className={panelClasses} tabIndex={0} onKeyDown={handleKeyDown}>
       {orientation === 'landscape' ? (
         <div className="card h-100">
           <div className="card-body d-flex flex-column">

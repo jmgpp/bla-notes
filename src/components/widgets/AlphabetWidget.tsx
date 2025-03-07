@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './AlphabetWidget.scss';
 
 // NATO phonetic alphabet with simple recognizable words
@@ -97,26 +97,6 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
     );
   };
   
-  // Add Escape key handler for portrait mode
-  useEffect(() => {
-    // Only set up the handler if we're in portrait mode and onClose is provided
-    if (orientation !== 'portrait' || !onClose) return;
-    
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    
-    // Add event listener
-    document.addEventListener('keydown', handleKeyDown);
-    
-    // Clean up
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [orientation, onClose]);
-  
   // Render close button only in portrait mode
   const renderCloseButton = () => {
     if (orientation !== 'portrait' || !onClose) return null;
@@ -132,8 +112,16 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
     );
   };
   
+  // Handle keyboard events
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && orientation === 'portrait' && onClose) {
+      e.preventDefault();
+      onClose();
+    }
+  };
+  
   return (
-    <div className={`alphabet-widget ${orientation}`} tabIndex={-1}>
+    <div className={`alphabet-widget ${orientation}`} tabIndex={0} onKeyDown={handleKeyDown}>
       {selectedText && getTextRepresentation(selectedText)}
       
       <div className={`alphabet-grid ${orientation}`}>
