@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './AlphabetWidget.scss';
-
-// Define language type
-type Language = 'eng' | 'spa';
 
 // NATO phonetic alphabet with simple recognizable words
 const natoAlphabet = [
@@ -52,14 +49,6 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
   onClose,
   onClearText
 }) => {
-  // Add language state
-  const [language, setLanguage] = useState<Language>('eng');
-  
-  // Toggle language between English and Spanish
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'eng' ? 'spa' : 'eng');
-  };
-
   // Function to convert text to simple word representation
   const getTextRepresentation = (text: string) => {
     if (!text) return null;
@@ -99,26 +88,13 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
             return (
               <div key={index} className="word-item">
                 <span className="letter-char">{char.toUpperCase()}</span>
-                <span className="simple-word eng">{item.eng}</span>
-                <span className="simple-word spa">{item.spa}</span>
+                <span className="simple-word">{item.eng}</span>
+                <span className="simple-word-spa">{item.spa}</span>
               </div>
             );
           })}
         </div>
       </div>
-    );
-  };
-  
-  // Render the language toggle button
-  const renderLanguageToggle = () => {
-    return (
-      <button 
-        className="language-toggle-button"
-        onClick={toggleLanguage}
-        aria-label={`Switch to ${language === 'eng' ? 'Spanish' : 'English'}`}
-      >
-        {language === 'eng' ? 'ENG' : 'SPA'}
-      </button>
     );
   };
   
@@ -158,11 +134,6 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
 
   return (
     <div className={`alphabet-widget ${orientation}`} tabIndex={-1}>
-      <div className="alphabet-header">
-        <h5>Alphabet</h5>
-        {renderLanguageToggle()}
-      </div>
-      
       {selectedText && getTextRepresentation(selectedText)}
       
       <div className={`alphabet-grid ${orientation}`}>
@@ -171,7 +142,7 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
             <div className="letter">{item.letter}</div>
             <div className="words">
               <div className="nato">{item.eng}</div>
-              <div className="simple">{language === 'eng' ? item.eng : item.spa}</div>
+              <div className="simple">{item.spa}</div>
             </div>
           </div>
         ))}
