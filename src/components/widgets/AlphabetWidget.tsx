@@ -1,34 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './AlphabetWidget.scss';
+
+// Define language type
+type Language = 'eng' | 'spa';
 
 // NATO phonetic alphabet with simple recognizable words
 const natoAlphabet = [
-  { letter: 'A', nato: 'Apple', simple: 'Amigo' },
-  { letter: 'B', nato: 'Banana', simple: 'Banana' },
-  { letter: 'C', nato: 'Cat', simple: 'Carlos' },
-  { letter: 'D', nato: 'Dog', simple: 'Domingo' },
-  { letter: 'E', nato: 'Elephant', simple: 'España' },
-  { letter: 'F', nato: 'Formula', simple: 'Fernando' },
-  { letter: 'G', nato: 'Grape', simple: 'Gato' },
-  { letter: 'H', nato: 'House', simple: 'Huevo' },
-  { letter: 'I', nato: 'Ice cream', simple: 'India' },
-  { letter: 'J', nato: 'Juliett', simple: 'Jarra' },
-  { letter: 'K', nato: 'Kite', simple: 'Kilo' },
-  { letter: 'L', nato: 'Lemon', simple: 'Limón' },
-  { letter: 'M', nato: 'Monkey', simple: 'Mamá' },
-  { letter: 'N', nato: 'November', simple: 'Nicolás' },
-  { letter: 'O', nato: 'Orange', simple: 'Oso' },
-  { letter: 'P', nato: 'Pizza', simple: 'Pintura' },
-  { letter: 'Q', nato: 'Queen', simple: 'Quiero' },
-  { letter: 'R', nato: 'Rainbow', simple: 'Raúl' },
-  { letter: 'S', nato: 'Sierra', simple: 'Sapo' },
-  { letter: 'T', nato: 'Tango', simple: 'Tomate' },
-  { letter: 'U', nato: 'Umbrella', simple: 'Ulises' },
-  { letter: 'V', nato: 'Victor', simple: 'Vaca' },
-  { letter: 'W', nato: 'Water', simple: 'Walter' },
-  { letter: 'X', nato: 'Xylophone', simple: 'Xilófono' },
-  { letter: 'Y', nato: 'Yankee', simple: 'Yogurt' },
-  { letter: 'Z', nato: 'Zebra', simple: 'Zapato' }
+  { letter: 'A', eng: 'Apple', spa: 'Amigo' },
+  { letter: 'B', eng: 'Banana', spa: 'Banana' },
+  { letter: 'C', eng: 'Cat', spa: 'Carlos' },
+  { letter: 'D', eng: 'Dog', spa: 'Domingo' },
+  { letter: 'E', eng: 'Elephant', spa: 'España' },
+  { letter: 'F', eng: 'Formula', spa: 'Fernando' },
+  { letter: 'G', eng: 'Grape', spa: 'Gato' },
+  { letter: 'H', eng: 'House', spa: 'Huevo' },
+  { letter: 'I', eng: 'Ice cream', spa: 'India' },
+  { letter: 'J', eng: 'Juliett', spa: 'Jarra' },
+  { letter: 'K', eng: 'Kite', spa: 'Kilo' },
+  { letter: 'L', eng: 'Lemon', spa: 'Limón' },
+  { letter: 'M', eng: 'Monkey', spa: 'Mamá' },
+  { letter: 'N', eng: 'November', spa: 'Nicolás' },
+  { letter: 'O', eng: 'Orange', spa: 'Oso' },
+  { letter: 'P', eng: 'Pizza', spa: 'Pintura' },
+  { letter: 'Q', eng: 'Queen', spa: 'Quiero' },
+  { letter: 'R', eng: 'Rainbow', spa: 'Raúl' },
+  { letter: 'S', eng: 'Sierra', spa: 'Sapo' },
+  { letter: 'T', eng: 'Tango', spa: 'Tomate' },
+  { letter: 'U', eng: 'Umbrella', spa: 'Ulises' },
+  { letter: 'V', eng: 'Victor', spa: 'Vaca' },
+  { letter: 'W', eng: 'Water', spa: 'Walter' },
+  { letter: 'X', eng: 'Xylophone', spa: 'Xilófono' },
+  { letter: 'Y', eng: 'Yankee', spa: 'Yogurt' },
+  { letter: 'Z', eng: 'Zebra', spa: 'Zapato' }
 ];
 
 // Create a lookup map for faster access
@@ -49,6 +52,14 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
   onClose,
   onClearText
 }) => {
+  // Add language state
+  const [language, setLanguage] = useState<Language>('eng');
+  
+  // Toggle language between English and Spanish
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'eng' ? 'spa' : 'eng');
+  };
+
   // Function to convert text to simple word representation
   const getTextRepresentation = (text: string) => {
     if (!text) return null;
@@ -88,12 +99,26 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
             return (
               <div key={index} className="word-item">
                 <span className="letter-char">{char.toUpperCase()}</span>
-                <span className="simple-word">{item.simple}</span>
+                <span className="simple-word eng">{item.eng}</span>
+                <span className="simple-word spa">{item.spa}</span>
               </div>
             );
           })}
         </div>
       </div>
+    );
+  };
+  
+  // Render the language toggle button
+  const renderLanguageToggle = () => {
+    return (
+      <button 
+        className="language-toggle-button"
+        onClick={toggleLanguage}
+        aria-label={`Switch to ${language === 'eng' ? 'Spanish' : 'English'}`}
+      >
+        {language === 'eng' ? 'ENG' : 'SPA'}
+      </button>
     );
   };
   
@@ -133,6 +158,11 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
 
   return (
     <div className={`alphabet-widget ${orientation}`} tabIndex={-1}>
+      <div className="alphabet-header">
+        <h5>Alphabet</h5>
+        {renderLanguageToggle()}
+      </div>
+      
       {selectedText && getTextRepresentation(selectedText)}
       
       <div className={`alphabet-grid ${orientation}`}>
@@ -140,8 +170,8 @@ const AlphabetWidget: React.FC<AlphabetWidgetProps> = ({
           <div key={item.letter} className="alphabet-item" tabIndex={-1}>
             <div className="letter">{item.letter}</div>
             <div className="words">
-              <div className="nato">{item.nato}</div>
-              <div className="simple">{item.simple}</div>
+              <div className="nato">{item.eng}</div>
+              <div className="simple">{language === 'eng' ? item.eng : item.spa}</div>
             </div>
           </div>
         ))}

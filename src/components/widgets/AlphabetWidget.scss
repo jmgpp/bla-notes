@@ -4,6 +4,39 @@
   overflow-y: auto;
   position: relative; /* Add position relative for absolute positioning of close button */
   
+  /* Header with language toggle */
+  .alphabet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #dee2e6;
+    
+    h5 {
+      margin: 0;
+      font-size: 1rem;
+      color: #343a40;
+    }
+    
+    .language-toggle-button {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      color: #6c757d;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: #e9ecef;
+        color: #495057;
+      }
+    }
+  }
+  
   .selected-text-representation {
     margin-bottom: 15px;
     padding: 10px;
@@ -63,6 +96,17 @@
         .simple-word {
           font-size: 0.8rem;
           color: #495057;
+          
+          &.eng {
+            font-size: 0.8rem;
+            font-weight: 500;
+          }
+          
+          &.spa {
+            font-size: 0.65rem;
+            font-style: italic;
+            color: #6c757d;
+          }
         }
       }
       
@@ -143,6 +187,15 @@
   
   // Portrait-specific styles
   &.portrait {
+    .alphabet-header {
+      padding: 8px 10px 6px;
+      background-color: #f8f9fa;
+      
+      h5 {
+        font-size: 0.9rem;
+      }
+    }
+    
     .alphabet-item {
       padding: 2px;
       
