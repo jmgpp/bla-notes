@@ -79,8 +79,8 @@ interface Command {
   syntax: string;
 }
 
-// Updated dictionary search function to use dictionary.json
-const searchDictionary = (query: string) => {
+// Updated dictionary search function to be async and use chunks
+const searchDictionary = async (query: string) => {
   if (!query || query.trim() === '') return null;
   
   const normalizedQuery = query.toLowerCase().trim();
@@ -93,19 +93,65 @@ const searchDictionary = (query: string) => {
     notes: string;
     tags: string[];
   }>;
-  
-  // Search in English terms, Spanish terms, and notes
-  const results = terms.filter(term => 
-    term.englishTerm.toLowerCase().includes(normalizedQuery) ||
-    term.spanishTerm.toLowerCase().includes(normalizedQuery) ||
-    term.notes.toLowerCase().includes(normalizedQuery)
-  );
-  
-  return results.length > 0 ? results.map(term => ({
-    term: term.englishTerm,
-    definition: term.spanishTerm,
-    examples: term.notes ? [term.notes] : undefined
-  })) : null;
+
+  // Process the search in chunks to avoid blocking the UI
+  const chunkSize = 500;
+  const results: typeof terms = [];
+
+  // Return a promise that resolves with the search results
+  return new Promise<any[]>((resolve) => {
+    let currentIndex = 0;
+
+    function processNextChunk() {
+      const chunk = terms.slice(currentIndex, currentIndex + chunkSize);
+      
+      // Filter this chunk - only search in english, spanish and tags
+      const chunkResults = chunk.filter(term => 
+        term.englishTerm.toLowerCase().includes(normalizedQuery) ||
+        term.spanishTerm.toLowerCase().includes(normalizedQuery) ||
+        term.tags.some(tag => tag.toLowerCase().includes(normalizedQuery))
+      );
+      
+      results.push(...chunkResults);
+      currentIndex += chunkSize;
+
+      if (currentIndex < terms.length) {
+        // Process next chunk in the next microtask
+        queueMicrotask(processNextChunk);
+      } else {
+        // All chunks processed, sort and resolve with results
+        if (results.length > 0) {
+          // Sort results: exact matches first, then partial matches
+          const sortedResults = results.sort((a, b) => {
+            const aEngExact = a.englishTerm.toLowerCase() === normalizedQuery;
+            const aSpanExact = a.spanishTerm.toLowerCase() === normalizedQuery;
+            const bEngExact = b.englishTerm.toLowerCase() === normalizedQuery;
+            const bSpanExact = b.spanishTerm.toLowerCase() === normalizedQuery;
+            
+            // If one has an exact match and the other doesn't
+            if ((aEngExact || aSpanExact) && !(bEngExact || bSpanExact)) return -1;
+            if (!(aEngExact || aSpanExact) && (bEngExact || bSpanExact)) return 1;
+            
+            // If both have exact matches or neither has exact matches,
+            // sort by length (shorter terms first)
+            return Math.min(a.englishTerm.length, a.spanishTerm.length) - 
+                   Math.min(b.englishTerm.length, b.spanishTerm.length);
+          });
+
+          resolve(sortedResults.map(term => ({
+            term: term.englishTerm,
+            definition: term.spanishTerm,
+            examples: term.notes ? [term.notes] : undefined
+          })));
+        } else {
+          resolve([]);
+        }
+      }
+    }
+
+    // Start processing chunks
+    processNextChunk();
+  });
 };
 
 const NotesPanel: React.FC<NotesPanelProps> = ({ 
@@ -331,7 +377,33 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
 
     const suggestions = suggestionType === 'command' 
       ? PLACEHOLDER_COMMANDS.filter(({ command }) => command.startsWith(commandFilter.toLowerCase()))
-      : brands.filter(brand => brand.name.toLowerCase().includes(commandFilter.toLowerCase()));
+      : brands.filter(brand => {
+          const matchesSearch = 
+            brand.name.toLowerCase().includes(commandFilter.toLowerCase()) ||
+            (brand.category && brand.category.toLowerCase().includes(commandFilter.toLowerCase())) ||
+            (brand.translation && brand.translation.toLowerCase().includes(commandFilter.toLowerCase()));
+          
+          return matchesSearch;
+        })
+        // Sort brands by how closely they match the filter
+        .sort((a, b) => {
+          // Exact matches at the start of the name come first
+          const aStartsWithExact = a.name.toLowerCase().startsWith(commandFilter.toLowerCase());
+          const bStartsWithExact = b.name.toLowerCase().startsWith(commandFilter.toLowerCase());
+          
+          if (aStartsWithExact && !bStartsWithExact) return -1;
+          if (!aStartsWithExact && bStartsWithExact) return 1;
+          
+          // Then matches that start with the filter (case insensitive)
+          const aStartsWith = a.name.toLowerCase().startsWith(commandFilter.toLowerCase());
+          const bStartsWith = b.name.toLowerCase().startsWith(commandFilter.toLowerCase());
+          
+          if (aStartsWith && !bStartsWith) return -1;
+          if (!aStartsWith && bStartsWith) return 1;
+          
+          // Then sort by alphabetical order
+          return a.name.localeCompare(b.name);
+        });
 
     if (suggestions.length === 0) return;
 
@@ -585,36 +657,42 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
     if (!textareaRef.current) return;
     
     const textarea = textareaRef.current;
+    const selectedText = contextMenuSelectedText; // Store the text before hiding menu
+    
+    // Hide menu first for better responsiveness
+    setShowContextMenu(false);
+    textarea.focus();
     
     // Perform different actions based on selection
     switch(action) {
       case 'google':
         // Open search for the selected text
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(contextMenuSelectedText)}`, '_blank');
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(selectedText)}`, '_blank');
         break;
       case 'translate':
         // Open Google Translate
-        window.open(`https://translate.google.com/?sl=auto&tl=es&text=${encodeURIComponent(contextMenuSelectedText)}`, '_blank');
+        window.open(`https://translate.google.com/?sl=auto&tl=es&text=${encodeURIComponent(selectedText)}`, '_blank');
         break;
       case 'webster':
         // Open dictionary definition
-        window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(contextMenuSelectedText)}`, '_blank');
+        window.open(`https://www.merriam-webster.com/dictionary/${encodeURIComponent(selectedText)}`, '_blank');
         break;
       case 'dictionary':
-        // Search internal dictionary and create a dictionary card
-        const results = searchDictionary(contextMenuSelectedText);
-        onAddCard({
-          type: 'dictionary',
-          data: {
-            searchTerm: contextMenuSelectedText,
-            dictionaryResults: results || []
-          }
+        // Search internal dictionary asynchronously in chunks
+        searchDictionary(selectedText).then(results => {
+          onAddCard({
+            type: 'dictionary',
+            data: {
+              searchTerm: selectedText,
+              dictionaryResults: results || []
+            }
+          });
         });
         break;
       case 'zip':
         // Handle ZIP code lookup
-        if (/^\d{5}$/.test(contextMenuSelectedText.trim())) {
-          lookupZipCode(contextMenuSelectedText.trim())
+        if (/^\d{5}$/.test(selectedText.trim())) {
+          lookupZipCode(selectedText.trim())
             .then(zipData => {
               onAddCard({
                 type: 'zip',
@@ -638,12 +716,9 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
         }
         // Set alphabet as active widget and pass the selected text
         setActiveWidget('alphabet');
-        setSelectedText(contextMenuSelectedText);
+        setSelectedText(selectedText);
         break;
     }
-    
-    setShowContextMenu(false);
-    textarea.focus();
   };
 
   // Add click outside handler for context menu

@@ -36,8 +36,17 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
   }, [selectedText]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setExpandedBrand(null); // Collapse any expanded brand when search changes
+    const newSearchTerm = e.target.value;
+    // Reset expanded brand when search changes
+    setExpandedBrand(null);
+    
+    // Reset active filter if clearing search
+    if (newSearchTerm === '') {
+      setActiveFilter(null);
+    }
+    
+    // Update search term
+    setSearchTerm(newSearchTerm);
   };
 
   const toggleBrandExpansion = (brandName: string) => {
@@ -46,6 +55,8 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
 
   const clearSearch = () => {
     setSearchTerm('');
+    setExpandedBrand(null);
+    setActiveFilter(null);
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
@@ -223,13 +234,13 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
           <div className="no-results">No matches found</div>
         ) : (
           sortedGroups.map(group => (
-            <div key={group} className="category-section">
+            <div key={`group-${group}-${searchTerm}`} className="category-section">
               <div className="category-header" style={{ backgroundColor: getGroupColor(group) }}>
-                {group}
+                {group} <span className="category-count">({groupedBrands[group].length})</span>
               </div>
               {groupedBrands[group].map(brand => (
                 <div 
-                  key={brand.name} 
+                  key={`${brand.category}-${brand.name}-${searchTerm}`} 
                   className={`brand-item ${expandedBrand === brand.name ? 'expanded' : ''}`}
                   onClick={() => toggleBrandExpansion(brand.name)}
                 >
@@ -252,7 +263,7 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
                           <div className="snippets-title">Snippets</div>
                           <ul className="snippets-list">
                             {brand.snippets.map((snippet, index) => (
-                              <li key={index} className="snippet-item">
+                              <li key={`${brand.category}-${brand.name}-snippet-${index}-${searchTerm}`} className="snippet-item">
                                 <div className="snippet-preview">
                                   {snippet.length > 100 ? `${snippet.substring(0, 100)}...` : snippet}
                                 </div>

@@ -10,3 +10,11 @@
 -snippets panel
     -all snippets and filters
     -favorites
+
+
+#Implementation Recommendation
+For dictionaries of thousands of entries, I'd recommend:
+
+-Start with a client-side trie implementation
+-Implement debouncing on your input (wait ~200-300ms after typing stops)
+-Limit results to the top 5-10 matches

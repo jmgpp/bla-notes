@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, forwardRef } from 'react';
 import './CommandSuggestions.scss';
-import { brands, Brand } from '../data/brands';
+import { 
+  brands, 
+  Brand, 
+  getCategoryGroupMap, 
+  getGroupColorMap, 
+  getCategoryColorMap 
+} from '../data/brands';
 
 interface Command {
   command: string;
@@ -94,37 +100,90 @@ const CommandSuggestions = forwardRef<HTMLDivElement, CommandSuggestionsProps>((
   };
 
   const renderBrandSuggestions = () => {
-    const filteredBrands = brands.filter(brand => 
-      brand.name.toLowerCase().includes(filter.toLowerCase())
-    );
+    // Use the same filtering logic as in BrandsWidget
+    const filteredBrands = brands.filter(brand => {
+      const matchesSearch = 
+        brand.name.toLowerCase().includes(filter.toLowerCase()) ||
+        (brand.category && brand.category.toLowerCase().includes(filter.toLowerCase())) ||
+        (brand.translation && brand.translation.toLowerCase().includes(filter.toLowerCase()));
+      
+      return matchesSearch;
+    });
 
-    if (filteredBrands.length === 0) return null;
+    // Sort brands by how closely they match the filter
+    const sortedBrands = [...filteredBrands].sort((a, b) => {
+      // Exact matches at the start of the name come first
+      const aStartsWithExact = a.name.toLowerCase().startsWith(filter.toLowerCase());
+      const bStartsWithExact = b.name.toLowerCase().startsWith(filter.toLowerCase());
+      
+      if (aStartsWithExact && !bStartsWithExact) return -1;
+      if (!aStartsWithExact && bStartsWithExact) return 1;
+      
+      // Then matches that start with the filter (case insensitive)
+      const aStartsWith = a.name.toLowerCase().startsWith(filter.toLowerCase());
+      const bStartsWith = b.name.toLowerCase().startsWith(filter.toLowerCase());
+      
+      if (aStartsWith && !bStartsWith) return -1;
+      if (!aStartsWith && bStartsWith) return 1;
+      
+      // Then sort by alphabetical order
+      return a.name.localeCompare(b.name);
+    });
+
+    // Get the category group map for color coding
+    const categoryToGroupMap = getCategoryGroupMap();
+    const categoryColorMap = getCategoryColorMap();
+    const groupColorMap = getGroupColorMap();
+
+    // Get color for a category
+    const getCategoryColor = (category: string): string => {
+      const group = categoryToGroupMap[category] || category;
+      
+      // If the category has a specific color in its group
+      if (categoryColorMap[group] && categoryColorMap[group][category]) {
+        return categoryColorMap[group][category];
+      }
+      
+      // Fallback to the group color
+      return groupColorMap[group] || '#6c757d'; // Default gray if no color is found
+    };
+
+    if (sortedBrands.length === 0) return null;
 
     return (
       <div className="command-list">
-        {filteredBrands.map((brand, index) => {
+        {sortedBrands.map((brand, index) => {
           const name = brand.name;
           const lowerName = name.toLowerCase();
           const lowerFilter = filter.toLowerCase();
           const matchStart = lowerName.indexOf(lowerFilter);
+          const categoryColor = getCategoryColor(brand.category);
           
           return (
             <div 
-              key={brand.name}
+              key={`${brand.category}-${brand.name}`}
               ref={index === selectedIndex ? selectedItemRef : null}
               className={`command-item ${index === selectedIndex ? 'selected' : ''}`}
               onClick={() => onSelect(brand.name)}
             >
-              <span className="brand-name">
-                {matchStart >= 0 ? (
-                  <>
-                    {name.slice(0, matchStart)}
-                    <span className="highlight">{name.slice(matchStart, matchStart + filter.length)}</span>
-                    {name.slice(matchStart + filter.length)}
-                  </>
-                ) : name}
-              </span>
-              <span className={`brand-category category-${brand.category.toLowerCase().replace(/[\s&]+/g, '-')}`}>
+              <div className="brand-info">
+                <span className="brand-name">
+                  {matchStart >= 0 ? (
+                    <>
+                      {name.slice(0, matchStart)}
+                      <span className="highlight">{name.slice(matchStart, matchStart + filter.length)}</span>
+                      {name.slice(matchStart + filter.length)}
+                    </>
+                  ) : name}
+                </span>
+                {brand.translation && brand.translation !== brand.name && (
+                  <span className="brand-translation">{brand.translation}</span>
+                )}
+              </div>
+              <span 
+                className={`brand-category category-${brand.category.toLowerCase().replace(/[\s&]+/g, '-')}`}
+                style={{ backgroundColor: categoryColor }}
+              >
                 {brand.category}
               </span>
             </div>

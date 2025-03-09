@@ -23,6 +23,10 @@ export const brands: Brand[] = [
   { name: 'New York Presbyterian Hospital', category: 'Hospitals', translation: 'Hospital Presbiteriano de Nueva York', notes: 'Academic medical center affiliated with Columbia and Cornell' },
   { name: 'MD Anderson Cancer Center', category: 'Hospitals', translation: 'Centro de Cáncer MD Anderson', notes: 'Cancer treatment and research center in Houston, Texas' },
   { name: 'Cedars-Sinai Medical Center', category: 'Hospitals', translation: 'Centro Médico Cedars-Sinai', notes: 'Nonprofit hospital in Los Angeles, California' },
+  { name: 'Baylor Scott & White Health', category: 'Hospitals', translation: 'Baylor Scott & White Health', notes: 'Largest not-for-profit healthcare system in Texas' },
+  { name: 'Seattle Children\'s Hospital', category: 'Hospitals', translation: 'Hospital Infantil de Seattle', notes: 'Pediatric medical center in Seattle, Washington' },
+  { name: 'OHSU', category: 'Hospitals', translation: 'Oregon Health & Science University', notes: 'Academic health center and research university in Portland, Oregon' },
+  { name: 'UW Medicine', category: 'Hospitals', translation: 'University of Washington Medicine', notes: 'Academic medical system in Seattle, Washington' },
   
   // Clinics
   { name: 'Kaiser Permanente Clinics', category: 'Clinics', translation: 'Clínicas Kaiser Permanente', notes: 'Integrated managed care consortium' },
@@ -35,6 +39,16 @@ export const brands: Brand[] = [
   { name: 'Wellness Centers', category: 'Clinics', translation: 'Centros de Bienestar', notes: 'Facilities focused on preventive healthcare and wellness' },
   { name: 'Family Practice Clinics', category: 'Clinics', translation: 'Clínicas de Medicina Familiar', notes: 'Primary care clinics for all ages' },
   { name: 'Specialized Medical Centers', category: 'Clinics', translation: 'Centros Médicos Especializados', notes: 'Clinics focused on specific medical specialties' },
+  { name: 'Wellspan Radiology Regional Center', category: 'Clinics', translation: 'Centro Regional de Radiología Wellspan', notes: 'Regional radiology center providing imaging services' },
+  { name: 'West Cornwall Family Medicine', category: 'Clinics', translation: 'Medicina Familiar de West Cornwall', notes: 'Family medicine clinic serving the West Cornwall community' },
+  { name: 'Asante Ear Nose and Throat', category: 'Clinics', translation: 'Asante Oído, Nariz y Garganta', notes: 'Specialized ENT clinic' },
+  { name: 'Mid County Health Clinic', category: 'Clinics', translation: 'Clínica de Salud Mid County', notes: 'Community health clinic serving the mid-county area' },
+  { name: 'Franciscan Health', category: 'Clinics', translation: 'Salud Franciscana', notes: 'Catholic healthcare organization with multiple clinics and facilities' },
+  { name: 'Riley Dermatology', category: 'Clinics', translation: 'Dermatología Riley', notes: 'Specialized dermatology clinic' },
+  { name: 'Partners In Health', category: 'Clinics', translation: 'Partners In Health (PIH)', notes: 'Global health organization that provides healthcare to vulnerable communities' },
+  { name: 'International Rescue Committee', category: 'Clinics', translation: 'International Rescue Committee (IRC)', notes: 'Global humanitarian aid organization providing healthcare to refugees' },
+  { name: 'Bardavon Health Innovations', category: 'Clinics', translation: 'Innovaciones de Salud Bardavon', notes: 'Workers compensation and occupational health services provider' },
+  { name: 'Icircle Services', category: 'Clinics', translation: 'Servicios Icircle', notes: 'Managed care organization providing long-term care services' },
   
   // Pharmacies
   { name: 'CVS Pharmacy', category: 'Pharmacies', translation: 'Farmacia CVS', notes: 'Major retail pharmacy chain in the US' },
@@ -63,6 +77,11 @@ export const brands: Brand[] = [
   { name: 'Medicare', category: 'Health Insurance', translation: 'Medicare', notes: 'Federal health insurance program for people 65+ or with certain disabilities' },
   { name: 'Medicaid', category: 'Health Insurance', translation: 'Medicaid', notes: 'Federal and state program that helps with medical costs for people with limited income' },
   { name: 'Tricare', category: 'Health Insurance', translation: 'Tricare', notes: 'Health care program for uniformed service members and their families' },
+  { name: 'CareFirst Community House Plan', category: 'Health Insurance', translation: 'Plan Comunitario CareFirst', notes: 'Community-based health insurance plan provider' },
+  { name: 'Evicore House Care', category: 'Health Insurance', translation: 'Cuidado Domiciliario Evicore', notes: 'Healthcare management services provider focusing on home care' },
+  { name: 'Independence Blue Cross Medicare', category: 'Health Insurance', translation: 'Medicare de Independence Blue Cross', notes: 'Medicare plans offered by Independence Blue Cross' },
+  { name: 'Scan Health MAPD', category: 'Health Insurance', translation: 'Scan Health MAPD', notes: 'Medicare Advantage Prescription Drug plans provider' },
+  { name: 'MyHealth Flex Card Services', category: 'Health Insurance', translation: 'Servicios de Tarjeta Flex MyHealth', notes: 'Flexible spending account card services' },
   
   // Debt Collector Companies - National Debt Collectors
   { name: 'Encore Capital Group', category: 'Debt', translation: 'Encore Capital Group', notes: 'Major debt collection company (National)' },
@@ -135,6 +154,8 @@ export const brands: Brand[] = [
   { name: 'Regions Bank', category: 'Banks', translation: 'Regions Bank', notes: 'Bank operating throughout the Southern US' },
   { name: 'SunTrust Bank', category: 'Banks', translation: 'SunTrust Bank', notes: 'Now part of Truist Financial after merging with BB&T' },
   { name: 'TD Bank', category: 'Banks', translation: 'TD Bank', notes: 'US subsidiary of Canadian Toronto-Dominion Bank' },
+  { name: 'Huntington Bank', category: 'Banks', translation: 'Banco Huntington', notes: 'Regional bank operating primarily in the Midwest' },
+  { name: 'United American Corporation', category: 'Banks', translation: 'United American Corporation (UAMA)', notes: 'Financial services and telecommunications corporation' },
   
   // Credit Unions
   { name: 'Navy Federal Credit Union', category: 'Credit Unions', translation: 'Cooperativa de Crédito Navy Federal', notes: 'Largest credit union in the US, serving military members' },
@@ -142,6 +163,8 @@ export const brands: Brand[] = [
   { name: 'State Employees Credit Union', category: 'Credit Unions', translation: 'Cooperativa de Crédito de Empleados Estatales', notes: 'Credit union for state employees' },
   { name: 'Teachers Credit Union', category: 'Credit Unions', translation: 'Cooperativa de Crédito para Maestros', notes: 'Credit union for educators' },
   { name: 'Boeing Employees Credit Union', category: 'Credit Unions', translation: 'Cooperativa de Crédito de Empleados de Boeing', notes: 'Credit union originally for Boeing employees' },
+  { name: 'Lake Huron Credit Union', category: 'Credit Unions', translation: 'Cooperativa de Crédito Lake Huron (LHCU)', notes: 'Regional credit union serving the Lake Huron area' },
+  { name: 'Georgia United Credit Union', category: 'Credit Unions', translation: 'Cooperativa de Crédito Georgia United', notes: 'Credit union serving Georgia communities' },
   
   // Investment Firms
   { name: 'Fidelity Investments', category: 'Investment Firms', translation: 'Fidelity Investments', notes: 'Financial services corporation managing retirement plans and funds' },
@@ -150,18 +173,18 @@ export const brands: Brand[] = [
   { name: 'BlackRock', category: 'Investment Firms', translation: 'BlackRock', notes: "World's largest asset manager" },
   { name: 'Morgan Stanley', category: 'Investment Firms', translation: 'Morgan Stanley', notes: 'Investment bank and financial services company' },
   
-  // Pain Relievers
-  { name: 'Ibuprofen (Advil)', category: 'Pain Relievers', translation: 'Ibuprofeno (Advil)', notes: 'NSAID used to reduce fever and treat pain or inflammation' },
-  { name: 'Acetaminophen (Tylenol)', category: 'Pain Relievers', translation: 'Acetaminofén (Tylenol)', notes: 'Pain reliever and fever reducer' },
-  { name: 'Naproxen (Aleve)', category: 'Pain Relievers', translation: 'Naproxeno (Aleve)', notes: 'NSAID used to treat pain, inflammation, and fever' },
-  { name: 'Aspirin', category: 'Pain Relievers', translation: 'Aspirina', notes: 'Pain reliever, fever reducer, and anti-inflammatory' },
+  // Pain
+  { name: 'Ibuprofen (Advil)', category: 'Pain', translation: 'Ibuprofeno (Advil)', notes: 'NSAID used to reduce fever and treat pain or inflammation' },
+  { name: 'Acetaminophen (Tylenol)', category: 'Pain', translation: 'Acetaminofén (Tylenol)', notes: 'Pain reliever and fever reducer' },
+  { name: 'Naproxen (Aleve)', category: 'Pain', translation: 'Naproxeno (Aleve)', notes: 'NSAID used to treat pain, inflammation, and fever' },
+  { name: 'Aspirin', category: 'Pain', translation: 'Aspirina', notes: 'Pain reliever, fever reducer, and anti-inflammatory' },
   
-  // Chronic Condition Medications
-  { name: 'Metformin', category: 'Chronic Medications', translation: 'Metformina', notes: 'First-line medication for type 2 diabetes' },
-  { name: 'Lisinopril', category: 'Chronic Medications', translation: 'Lisinopril', notes: 'ACE inhibitor used to treat high blood pressure and heart failure' },
-  { name: 'Levothyroxine', category: 'Chronic Medications', translation: 'Levotiroxina', notes: 'Synthetic thyroid hormone for hypothyroidism' },
-  { name: 'Atorvastatin', category: 'Chronic Medications', translation: 'Atorvastatina', notes: 'Statin medication used to prevent cardiovascular disease' },
-  { name: 'Amlodipine', category: 'Chronic Medications', translation: 'Amlodipina', notes: 'Calcium channel blocker used to treat high blood pressure' },
+  // Chronic
+  { name: 'Metformin', category: 'Chronic', translation: 'Metformina', notes: 'First-line medication for type 2 diabetes' },
+  { name: 'Lisinopril', category: 'Chronic', translation: 'Lisinopril', notes: 'ACE inhibitor used to treat high blood pressure and heart failure' },
+  { name: 'Levothyroxine', category: 'Chronic', translation: 'Levotiroxina', notes: 'Synthetic thyroid hormone for hypothyroidism' },
+  { name: 'Atorvastatin', category: 'Chronic', translation: 'Atorvastatina', notes: 'Statin medication used to prevent cardiovascular disease' },
+  { name: 'Amlodipine', category: 'Chronic', translation: 'Amlodipina', notes: 'Calcium channel blocker used to treat high blood pressure' },
   
   // Antibiotics
   { name: 'Amoxicillin', category: 'Antibiotics', translation: 'Amoxicilina', notes: 'Penicillin antibiotic used to treat bacterial infections' },
@@ -169,11 +192,86 @@ export const brands: Brand[] = [
   { name: 'Ciprofloxacin', category: 'Antibiotics', translation: 'Ciprofloxacina', notes: 'Fluoroquinolone antibiotic used to treat bacterial infections' },
   { name: 'Doxycycline', category: 'Antibiotics', translation: 'Doxiciclina', notes: 'Tetracycline antibiotic used to treat bacterial infections' },
   
-  // Mental Health Medications
-  { name: 'Sertraline (Zoloft)', category: 'Mental Health Medications', translation: 'Sertralina (Zoloft)', notes: 'SSRI antidepressant' },
-  { name: 'Fluoxetine (Prozac)', category: 'Mental Health Medications', translation: 'Fluoxetina (Prozac)', notes: 'SSRI antidepressant' },
-  { name: 'Escitalopram (Lexapro)', category: 'Mental Health Medications', translation: 'Escitalopram (Lexapro)', notes: 'SSRI antidepressant' },
-  { name: 'Alprazolam (Xanax)', category: 'Mental Health Medications', translation: 'Alprazolam (Xanax)', notes: 'Benzodiazepine used to treat anxiety and panic disorders' },
+  // Mental Health
+  { name: 'Sertraline (Zoloft)', category: 'Mental Health', translation: 'Sertralina (Zoloft)', notes: 'SSRI antidepressant' },
+  { name: 'Fluoxetine (Prozac)', category: 'Mental Health', translation: 'Fluoxetina (Prozac)', notes: 'SSRI antidepressant' },
+  { name: 'Escitalopram (Lexapro)', category: 'Mental Health', translation: 'Escitalopram (Lexapro)', notes: 'SSRI antidepressant' },
+  { name: 'Alprazolam (Xanax)', category: 'Mental Health', translation: 'Alprazolam (Xanax)', notes: 'Benzodiazepine used to treat anxiety and panic disorders' },
+  
+  // Diabetes
+  { name: 'Metformin (Glucophage)', category: 'Diabetes', translation: 'Metformina (Glucophage)', notes: 'First-line treatment for Type 2 diabetes' },
+  { name: 'Glipizide (Glucotrol)', category: 'Diabetes', translation: 'Glipizida (Glucotrol)', notes: 'Sulfonylurea medication for Type 2 diabetes' },
+  { name: 'Glimepiride (Amaryl)', category: 'Diabetes', translation: 'Glimepirida (Amaryl)', notes: 'Sulfonylurea medication for Type 2 diabetes' },
+  { name: 'Sitagliptin (Januvia)', category: 'Diabetes', translation: 'Sitagliptina (Januvia)', notes: 'DPP-4 inhibitor for Type 2 diabetes' },
+  { name: 'Linagliptin (Tradjenta)', category: 'Diabetes', translation: 'Linagliptina (Tradjenta)', notes: 'DPP-4 inhibitor for Type 2 diabetes' },
+  { name: 'Empagliflozin (Jardiance)', category: 'Diabetes', translation: 'Empagliflozina (Jardiance)', notes: 'SGLT2 inhibitor for Type 2 diabetes' },
+  { name: 'Dapagliflozin (Farxiga)', category: 'Diabetes', translation: 'Dapagliflozina (Farxiga)', notes: 'SGLT2 inhibitor for Type 2 diabetes' },
+  { name: 'Semaglutide (Ozempic, Wegovy)', category: 'Diabetes', translation: 'Semaglutida (Ozempic, Wegovy)', notes: 'GLP-1 receptor agonist for Type 2 diabetes and weight management' },
+  { name: 'Dulaglutide (Trulicity)', category: 'Diabetes', translation: 'Dulaglutida (Trulicity)', notes: 'GLP-1 receptor agonist for Type 2 diabetes' },
+  { name: 'Lantus', category: 'Diabetes', translation: 'Lantus', notes: 'Long-acting insulin' },
+  { name: 'Levemir', category: 'Diabetes', translation: 'Levemir', notes: 'Long-acting insulin' },
+  { name: 'Novolog', category: 'Diabetes', translation: 'Novolog', notes: 'Rapid-acting insulin' },
+  { name: 'Humalog', category: 'Diabetes', translation: 'Humalog', notes: 'Rapid-acting insulin' },
+  { name: 'Tresiba', category: 'Diabetes', translation: 'Tresiba', notes: 'Ultra-long-acting insulin' },
+  
+  // Cholesterol
+  { name: 'Atorvastatin (Lipitor)', category: 'Cholesterol', translation: 'Atorvastatina (Lipitor)', notes: 'Statin medication to lower cholesterol' },
+  { name: 'Rosuvastatin (Crestor)', category: 'Cholesterol', translation: 'Rosuvastatina (Crestor)', notes: 'Statin medication to lower cholesterol' },
+  { name: 'Simvastatin (Zocor)', category: 'Cholesterol', translation: 'Simvastatina (Zocor)', notes: 'Statin medication to lower cholesterol' },
+  { name: 'Evolocumab (Repatha)', category: 'Cholesterol', translation: 'Evolocumab (Repatha)', notes: 'PCSK9 inhibitor for lowering cholesterol' },
+  { name: 'Alirocumab (Praluent)', category: 'Cholesterol', translation: 'Alirocumab (Praluent)', notes: 'PCSK9 inhibitor for lowering cholesterol' },
+  { name: 'Ezetimibe (Zetia)', category: 'Cholesterol', translation: 'Ezetimiba (Zetia)', notes: 'Cholesterol absorption inhibitor' },
+  { name: 'Cholestyramine (Questran)', category: 'Cholesterol', translation: 'Colestiramina (Questran)', notes: 'Bile acid sequestrant to lower cholesterol' },
+  { name: 'Fenofibrate (Tricor)', category: 'Cholesterol', translation: 'Fenofibrato (Tricor)', notes: 'Fibrate medication to lower triglycerides and increase HDL' },
+  { name: 'Gemfibrozil (Lopid)', category: 'Cholesterol', translation: 'Gemfibrozil (Lopid)', notes: 'Fibrate medication to lower triglycerides' },
+  
+  // Blood Thinners
+  { name: 'Warfarin (Coumadin)', category: 'Blood Thinners', translation: 'Warfarina (Coumadin)', notes: 'Anticoagulant to prevent blood clots' },
+  { name: 'Apixaban (Eliquis)', category: 'Blood Thinners', translation: 'Apixaban (Eliquis)', notes: 'Direct oral anticoagulant (DOAC)' },
+  { name: 'Rivaroxaban (Xarelto)', category: 'Blood Thinners', translation: 'Rivaroxaban (Xarelto)', notes: 'Direct oral anticoagulant (DOAC)' },
+  { name: 'Dabigatran (Pradaxa)', category: 'Blood Thinners', translation: 'Dabigatran (Pradaxa)', notes: 'Direct oral anticoagulant (DOAC)' },
+  { name: 'Aspirin', category: 'Blood Thinners', translation: 'Aspirina', notes: 'Antiplatelet medication' },
+  { name: 'Clopidogrel (Plavix)', category: 'Blood Thinners', translation: 'Clopidogrel (Plavix)', notes: 'Antiplatelet medication' },
+  { name: 'Ticagrelor (Brilinta)', category: 'Blood Thinners', translation: 'Ticagrelor (Brilinta)', notes: 'Antiplatelet medication' },
+  
+  // Hypertension
+  { name: 'Lisinopril (Zestril)', category: 'Hypertension', translation: 'Lisinopril (Zestril)', notes: 'ACE inhibitor for high blood pressure' },
+  { name: 'Enalapril (Vasotec)', category: 'Hypertension', translation: 'Enalapril (Vasotec)', notes: 'ACE inhibitor for high blood pressure' },
+  { name: 'Losartan (Cozaar)', category: 'Hypertension', translation: 'Losartán (Cozaar)', notes: 'ARB for high blood pressure' },
+  { name: 'Valsartan (Diovan)', category: 'Hypertension', translation: 'Valsartán (Diovan)', notes: 'ARB for high blood pressure' },
+  { name: 'Amlodipine (Norvasc)', category: 'Hypertension', translation: 'Amlodipina (Norvasc)', notes: 'Calcium channel blocker for high blood pressure' },
+  { name: 'Diltiazem (Cardizem)', category: 'Hypertension', translation: 'Diltiazem (Cardizem)', notes: 'Calcium channel blocker for high blood pressure' },
+  { name: 'Metoprolol (Lopressor)', category: 'Hypertension', translation: 'Metoprolol (Lopressor)', notes: 'Beta-blocker for high blood pressure' },
+  { name: 'Atenolol (Tenormin)', category: 'Hypertension', translation: 'Atenolol (Tenormin)', notes: 'Beta-blocker for high blood pressure' },
+  { name: 'Hydrochlorothiazide (HCTZ)', category: 'Hypertension', translation: 'Hidroclorotiazida (HCTZ)', notes: 'Diuretic for high blood pressure' },
+  { name: 'Furosemide (Lasix)', category: 'Hypertension', translation: 'Furosemida (Lasix)', notes: 'Loop diuretic for high blood pressure and edema' },
+  
+  // Respiratory
+  { name: 'Fluticasone (Flovent)', category: 'Respiratory', translation: 'Fluticasona (Flovent)', notes: 'Inhaled corticosteroid for asthma/COPD' },
+  { name: 'Budesonide (Pulmicort)', category: 'Respiratory', translation: 'Budesonida (Pulmicort)', notes: 'Inhaled corticosteroid for asthma/COPD' },
+  { name: 'Albuterol (ProAir, Ventolin)', category: 'Respiratory', translation: 'Albuterol (ProAir, Ventolin)', notes: 'Bronchodilator for asthma/COPD' },
+  { name: 'Tiotropium (Spiriva)', category: 'Respiratory', translation: 'Tiotropio (Spiriva)', notes: 'Bronchodilator for COPD' },
+  { name: 'Fluticasone/Salmeterol (Advair)', category: 'Respiratory', translation: 'Fluticasona/Salmeterol (Advair)', notes: 'Combination inhaler for asthma/COPD' },
+  { name: 'Budesonide/Formoterol (Symbicort)', category: 'Respiratory', translation: 'Budesonida/Formoterol (Symbicort)', notes: 'Combination inhaler for asthma/COPD' },
+  { name: 'Montelukast (Singulair)', category: 'Respiratory', translation: 'Montelukast (Singulair)', notes: 'Leukotriene modifier for asthma' },
+  
+  // Gastrointestinal
+  { name: 'Omeprazole (Prilosec)', category: 'Gastrointestinal', translation: 'Omeprazol (Prilosec)', notes: 'Proton pump inhibitor for acid reflux/GERD' },
+  { name: 'Pantoprazole (Protonix)', category: 'Gastrointestinal', translation: 'Pantoprazol (Protonix)', notes: 'Proton pump inhibitor for acid reflux/GERD' },
+  { name: 'Famotidine (Pepcid)', category: 'Gastrointestinal', translation: 'Famotidina (Pepcid)', notes: 'H2 blocker for acid reflux/GERD' },
+  { name: 'Calcium carbonate (Tums)', category: 'Gastrointestinal', translation: 'Carbonato de calcio (Tums)', notes: 'Antacid for heartburn' },
+  { name: 'Aluminum/magnesium hydroxide (Maalox)', category: 'Gastrointestinal', translation: 'Hidróxido de aluminio/magnesio (Maalox)', notes: 'Antacid for heartburn' },
+  
+  // Government
+  { name: 'Pennsylvania Customer Assistance Program', category: 'Government', translation: 'Programa de Asistencia al Cliente de Pennsylvania (PCAP)', notes: 'State program providing assistance to Pennsylvania residents' },
+  { name: 'Union County Division Social Services', category: 'Government', translation: 'División de Servicios Sociales del Condado de Union', notes: 'County-level social services agency' },
+  { name: 'Financial Counseling at Harbourview Medical Center', category: 'Government', translation: 'Asesoramiento Financiero en el Centro Médico Harbourview', notes: 'Financial counseling services at Harbourview Medical Center' },
+  { name: 'Customer Services HDL', category: 'Government', translation: 'Servicios al Cliente HDL', notes: 'Customer service department for healthcare services' },
+ 
+  // Healthcare
+  { name: 'Envera Health', category: 'Healthcare', translation: 'Envera Health', notes: 'Healthcare services provider focusing on patient engagement' },
+  { name: 'biBERK', category: 'Healthcare', translation: 'biBERK', notes: 'Direct business insurance provider with healthcare services' },
+  { name: 'Heritage Medical National and Safety Council', category: 'Healthcare', translation: 'Consejo Nacional de Seguridad y Médico Heritage', notes: 'Organization focusing on medical safety standards' },
 ];
 
 // Utility function to get all category to group mappings
@@ -190,10 +288,20 @@ export const getCategoryGroupMap = (): Record<string, string> => {
     'Debt': 'Financial',
     
     // Medications
-    'Pain Relievers': 'Medication',
-    'Chronic Medications': 'Medication',
+    'Pain': 'Medication',
+    'Chronic': 'Medication',
     'Antibiotics': 'Medication',
-    'Mental Health Medications': 'Medication',
+    'Mental Health': 'Medication',
+    'Diabetes': 'Medication',
+    'Cholesterol': 'Medication',
+    'Blood Thinners': 'Medication',
+    'Hypertension': 'Medication',
+    'Respiratory': 'Medication',
+    'Gastrointestinal': 'Medication',
+    
+    // New categories
+    'Government': 'Government',
+    'Healthcare': 'Healthcare',
     
     // Keep these as their own categories
     'Pharmacies': 'Pharmacies',
@@ -209,6 +317,8 @@ export const getGroupColorMap = (): Record<string, string> => {
     'Health Insurance': '#0dcaf0', // Cyan
     'Financial': '#198754', // Green
     'Medication': '#dc3545', // Red
+    'Government': '#fd7e14', // Orange
+    'Healthcare': '#20c997', // Teal
   };
 };
 
@@ -241,10 +351,26 @@ export const getCategoryColorMap = (): Record<string, Record<string, string>> =>
     
     // Reds/Pinks for Medication group
     'Medication': {
-      'Pain Relievers': '#dc3545', // Bright red
-      'Chronic Medications': '#bd2130', // Dark red
+      'Pain': '#dc3545', // Bright red
+      'Chronic': '#bd2130', // Dark red
       'Antibiotics': '#e83e8c', // Pink
-      'Mental Health Medications': '#d63384', // Raspberry
+      'Mental Health': '#d63384', // Raspberry
+      'Diabetes': '#c71f37', // Crimson
+      'Cholesterol': '#ff6b6b', // Coral red
+      'Blood Thinners': '#cd5c5c', // Indian red
+      'Hypertension': '#a52a2a', // Brown-red
+      'Respiratory': '#ff4500', // Orange-red
+      'Gastrointestinal': '#b22222', // Firebrick
+    },
+    
+    // Oranges for Government
+    'Government': {
+      'Government': '#fd7e14', // Orange
+    },
+    
+    // Teals for Healthcare
+    'Healthcare': {
+      'Healthcare': '#20c997', // Teal
     },
   };
 }; 

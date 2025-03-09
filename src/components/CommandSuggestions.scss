@@ -4,40 +4,43 @@
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-height: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-height: 350px;
   overflow-y: auto;
+  font-size: 13px;
   
   &.command {
     max-width: 300px;
   }
   
   &.brand {
-    max-width: 400px;
+    max-width: 420px;
   }
   
   .command-list {
     .command-item {
-      padding: 8px 12px;
+      padding: 5px 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      border-left: 3px solid transparent;
+      justify-content: space-between;
+      gap: 6px;
+      border-left: 2px solid transparent;
       transition: all 0.2s ease;
+      min-height: 28px;
       
       &:hover {
         background-color: #f8f9fa;
       }
       
       &.selected {
-        background-color: #f8f9fa;
+        background-color: #f0f4f8;
         border-left-color: #0d6efd;
       }
       
       .command {
         font-family: monospace;
-        font-size: 14px;
+        font-size: 13px;
         
         .typed-part {
           color: #0d6efd;
@@ -50,12 +53,16 @@
       
       .description {
         color: #6c757d;
-        font-size: 12px;
+        font-size: 11px;
       }
 
       .brand-name {
         font-weight: 500;
         flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 240px;
         
         .highlight {
           color: #0d6efd;
@@ -63,62 +70,34 @@
         }
       }
 
-      .brand-category {
-        font-size: 0.85em;
-        padding: 2px 8px;
-        border-radius: 3px;
-        font-weight: 500;
+      .brand-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .brand-translation {
+        font-size: 0.65rem;
+        color: #6c757d;
+        font-style: italic;
         white-space: nowrap;
-        
-        // Category colors
-        &.category-hospitals {
-          background-color: #e3f2fd;
-          color: #1565c0;
-        }
-        &.category-clinics {
-          background-color: #e8f5e9;
-          color: #2e7d32;
-        }
-        &.category-pharmacies {
-          background-color: #f3e5f5;
-          color: #7b1fa2;
-        }
-        &.category-health-insurance {
-          background-color: #e0f7fa;
-          color: #00838f;
-        }
-        &.category-banks {
-          background-color: #fff3e0;
-          color: #ef6c00;
-        }
-        &.category-credit-unions {
-          background-color: #ffebee;
-          color: #c62828;
-        }
-        &.category-investment-firms {
-          background-color: #e8eaf6;
-          color: #3949ab;
-        }
-        &.category-pain-relievers {
-          background-color: #fce4ec;
-          color: #c2185b;
-        }
-        &.category-chronic-medications {
-          background-color: #f8bbd0;
-          color: #d81b60;
-        }
-        &.category-antibiotics {
-          background-color: #f3e5f5;
-          color: #8e24aa;
-        }
-        &.category-mental-health-medications {
-          background-color: #e1bee7;
-          color: #6a1b9a;
-        }
-        &.category-debt {
-          background-color: #ffcdd2;
-          color: #c62828;
-        }
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: -1px;
+      }
+
+      .brand-category {
+        font-size: 0.7rem;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-weight: 600;
+        white-space: nowrap;
+        color: white;
+        text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+        min-width: 60px;
+        text-align: center;
       }
     }
   }

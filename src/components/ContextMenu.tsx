@@ -89,29 +89,30 @@ const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({
     let menuOpenedTimer: number | null = null;
     
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore Space keypresses that are part of Alt+Space (menu opening)
+      // Only process events when the menu is visible
+      if (!visible) return;
+
+      // Handle Alt+Space for menu opening
       if (e.code === 'Space' && e.altKey) {
-        // This is used to open the menu, not confirm actions
+        e.preventDefault();
         menuJustOpened = true;
         
-        // Reset the flag after a short delay
         if (menuOpenedTimer) {
           window.clearTimeout(menuOpenedTimer);
         }
         menuOpenedTimer = window.setTimeout(() => {
           menuJustOpened = false;
           menuOpenedTimer = null;
-        }, 300); // Give enough time for the menu to open
+        }, 100); // Reduced time to be more responsive
         
         return;
       }
       
-      // Only handle Space key when:
-      // 1. Menu is visible
-      // 2. It's not the same Space press that opened the menu
-      // 3. It's a genuine user event
-      if (visible && e.code === 'Space' && !e.altKey && !menuJustOpened && e.isTrusted) {
+      // Handle Space for selection
+      if (e.code === 'Space' && !e.altKey && !menuJustOpened) {
         e.preventDefault();
+        e.stopPropagation(); // Prevent the event from reaching the textarea
+        
         // Get the selected option
         const selectedOption = CONTEXT_OPTIONS[selectedIndex];
         if (selectedOption) {
@@ -120,33 +121,33 @@ const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(({
           // Close menu
           onClose();
           
-          // Only insert a space if there is no text selection
+          // Handle space insertion in textarea if needed
           const textarea = document.activeElement as HTMLTextAreaElement;
           if (textarea && textarea.tagName === 'TEXTAREA') {
             const start = textarea.selectionStart || 0;
             const end = textarea.selectionEnd || 0;
             
-            // Check if text is selected
+            // Only insert space if no text is selected
             if (start === end) {
-              // No text selected, safe to insert a space
               const value = textarea.value;
               textarea.value = value.substring(0, start) + ' ' + value.substring(end);
               textarea.selectionStart = textarea.selectionEnd = start + 1;
             }
-            // If text is selected, don't modify it - just keep the selection
           }
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      // Clean up timer
-      if (menuOpenedTimer) {
-        window.clearTimeout(menuOpenedTimer);
-      }
-    };
+    // Only add the event listener when the menu is visible
+    if (visible) {
+      window.addEventListener('keydown', handleKeyDown, true); // Use capture phase
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown, true);
+        if (menuOpenedTimer) {
+          window.clearTimeout(menuOpenedTimer);
+        }
+      };
+    }
   }, [visible, selectedIndex, onSelect, onClose]);
 
   if (!visible || !position) return null;
