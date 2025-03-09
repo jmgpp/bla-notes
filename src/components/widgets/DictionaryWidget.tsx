@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './DictionaryWidget.scss';
 import dictionaryData from '../../data/dictionary.json';
 
@@ -19,136 +19,252 @@ interface Term {
   showTags?: boolean;
 }
 
-interface Category {
-  id: number;
-  name: string;
-  order: number;
-  subcategories: Subcategory[];
-}
-
-interface Subcategory {
-  id: number;
-  name: string;
-}
-
 const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWidgets, selectedText }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [expandedTermId, setExpandedTermId] = useState<string | null>(null);
-  const [terms, setTerms] = useState<Term[]>(dictionaryData.terms);
+  // STATE MANAGEMENT
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(null);
+  const [expandedTermId, setExpandedTermId] = useState<string | null>(null);
   const [enterPressed, setEnterPressed] = useState(false);
-  const termsListRef = useRef<HTMLDivElement>(null);
+  
+  // Key state for filtering - with forced rerender key
+  const [visibleTerms, setVisibleTerms] = useState<Term[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // This key forces a complete re-render when filters change
+  const [rerenderKey, setRerenderKey] = useState(0);
+  
+  // REFS
   const searchInputRef = useRef<HTMLInputElement>(null);
   const lastEnterPressRef = useRef<number | null>(null);
   const enterPressTimeoutRef = useRef<number | null>(null);
+  const filterUpdateCountRef = useRef(0);
+  const widgetActiveRef = useRef<boolean>(false);
+
+  // CATEGORIES DATA
+  const categories = dictionaryData.categories;
   
-  const categories = useMemo(() => dictionaryData.categories, []);
-  
-  // Focus search input when widget becomes visible
+  // SUBCATEGORIES for selected category
+  const subcategories = selectedCategory !== null 
+    ? (categories.find(cat => cat.id === selectedCategory)?.subcategories || [])
+    : [];
+
+  // Sort terms alphabetically by English term
+  const sortTermsAlphabetically = (terms: Term[]): Term[] => {
+    return [...terms].sort((a, b) => 
+      a.englishTerm.toLowerCase().localeCompare(b.englishTerm.toLowerCase())
+    );
+  };
+
+  // Sort terms with best matches first, then alphabetically
+  const sortTermsByRelevance = (terms: Term[], query: string): Term[] => {
+    if (!query.trim()) {
+      return sortTermsAlphabetically(terms);
+    }
+
+    const queryLower = query.toLowerCase().trim();
+    
+    return [...terms].sort((a, b) => {
+      // Check for exact matches (case insensitive)
+      const aEnglishExact = a.englishTerm.toLowerCase() === queryLower;
+      const bEnglishExact = b.englishTerm.toLowerCase() === queryLower;
+      const aSpanishExact = a.spanishTerm.toLowerCase() === queryLower;
+      const bSpanishExact = b.spanishTerm.toLowerCase() === queryLower;
+      
+      // Exact matches go to the top
+      if (aEnglishExact && !bEnglishExact) return -1;
+      if (bEnglishExact && !aEnglishExact) return 1;
+      if (aSpanishExact && !bSpanishExact) return -1;
+      if (bSpanishExact && !aSpanishExact) return 1;
+      
+      // Check for starts with matches
+      const aEnglishStarts = a.englishTerm.toLowerCase().startsWith(queryLower);
+      const bEnglishStarts = b.englishTerm.toLowerCase().startsWith(queryLower);
+      const aSpanishStarts = a.spanishTerm.toLowerCase().startsWith(queryLower);
+      const bSpanishStarts = b.spanishTerm.toLowerCase().startsWith(queryLower);
+      
+      // "Starts with" matches come next
+      if (aEnglishStarts && !bEnglishStarts) return -1;
+      if (bEnglishStarts && !aEnglishStarts) return 1;
+      if (aSpanishStarts && !bSpanishStarts) return -1;
+      if (bSpanishStarts && !aSpanishStarts) return 1;
+      
+      // Finally, sort alphabetically by English term
+      return a.englishTerm.toLowerCase().localeCompare(b.englishTerm.toLowerCase());
+    });
+  };
+
+  // INITIALIZATION
   useEffect(() => {
-    if (showWidgets && searchInputRef.current) {
-      // Small delay to ensure the DOM is fully rendered
+    setIsLoading(true);
+    
+    // Set initial data after a brief delay, sorted alphabetically
+    setTimeout(() => {
+      const sortedTerms = sortTermsAlphabetically(dictionaryData.terms);
+      setVisibleTerms(sortedTerms);
+      setIsLoading(false);
+    }, 100);
+  }, []);
+  
+  // CRITICAL: APPLY FILTERS
+  useEffect(() => {
+    // Skip if still loading
+    if (isLoading) {
+      return;
+    }
+    
+    const updateCounter = ++filterUpdateCountRef.current;
+    
+    try {
+      // Start with all terms
+      let results = [...dictionaryData.terms];
+      
+      // Apply category filter
+      if (selectedCategory !== null) {
+        results = results.filter((term: Term) => term.categoryId === selectedCategory);
+      }
+      
+      // Apply subcategory filter
+      if (selectedSubcategory !== null) {
+        results = results.filter((term: Term) => term.subcategoryId === selectedSubcategory);
+      }
+      
+      // Apply search term filter
+      if (searchTerm.trim()) {
+        const searchLower = searchTerm.toLowerCase().trim();
+        results = results.filter((term: Term) => 
+          term.englishTerm.toLowerCase().includes(searchLower) || 
+          term.spanishTerm.toLowerCase().includes(searchLower) || 
+          term.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        );
+        
+        // Sort by relevance when there's a search term
+        results = sortTermsByRelevance(results, searchTerm);
+      } else {
+        // Sort alphabetically when there's no search term
+        results = sortTermsAlphabetically(results);
+      }
+      
+      // Update state with filtered and sorted results
+      setVisibleTerms(results);
+      
+    } catch (error) {
+      console.error("Error in filter application:", error);
+    }
+  }, [searchTerm, selectedCategory, selectedSubcategory, isLoading]);
+  
+  // Focus search when widget becomes visible
+  useEffect(() => {
+    if (showWidgets) {
+      widgetActiveRef.current = true;
+      
+      // Focus the search input when the widget becomes visible
       setTimeout(() => {
-        searchInputRef.current?.focus();
+        if (searchInputRef.current && widgetActiveRef.current) {
+          searchInputRef.current.focus();
+        }
       }, 50);
+    } else {
+      widgetActiveRef.current = false;
     }
   }, [showWidgets]);
   
-  // Set search term when selectedText changes
+  // Set search term when selectedText changes and focus the search input
   useEffect(() => {
-    if (selectedText) {
+    if (selectedText && widgetActiveRef.current) {
       setSearchTerm(selectedText);
+      
+      // Focus the search input when text is selected
+      setTimeout(() => {
+        if (searchInputRef.current && widgetActiveRef.current) {
+          searchInputRef.current.focus();
+        }
+      }, 50);
     }
   }, [selectedText]);
   
-  // Ensure proper scrolling when component mounts
-  useEffect(() => {
-    if (termsListRef.current) {
-      termsListRef.current.style.overflow = 'auto';
-    }
-  }, []);
-  
-  // Get subcategories for the selected category
-  const subcategories = useMemo(() => {
-    if (!selectedCategory) return [];
-    const category = categories.find(cat => cat.id === selectedCategory);
-    return category ? category.subcategories : [];
-  }, [selectedCategory, categories]);
-
-  // Filter terms based on search input and selected category/subcategory
-  const filteredTerms = useMemo(() => {
-    let filtered = terms;
-    
-    // Filter by category if selected
-    if (selectedCategory !== null) {
-      filtered = filtered.filter(term => term.categoryId === selectedCategory);
-    }
-    
-    // Filter by subcategory if selected
-    if (selectedSubcategory !== null) {
-      filtered = filtered.filter(term => term.subcategoryId === selectedSubcategory);
-    }
-    
-    // Filter by search term
-    if (searchTerm.trim()) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(term => 
-        term.englishTerm.toLowerCase().includes(searchLower) || 
-        term.spanishTerm.toLowerCase().includes(searchLower) || 
-        term.notes.toLowerCase().includes(searchLower) ||
-        term.tags.some(tag => tag.toLowerCase().includes(searchLower))
-      );
-    }
-    
-    return filtered;
-  }, [searchTerm, terms, selectedCategory, selectedSubcategory]);
-
+  // Handle term click (expand/collapse)
   const handleTermClick = (termId: string) => {
     setExpandedTermId(expandedTermId === termId ? null : termId);
   };
   
-  const handleCategoryChange = (categoryId: number | null) => {
-    setSelectedCategory(categoryId);
+  // Handle category change
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedCategory(value ? Number(value) : null);
     setSelectedSubcategory(null); // Reset subcategory when category changes
+    
+    // Return focus to search input
+    setTimeout(() => {
+      if (searchInputRef.current && widgetActiveRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, 50);
   };
   
-  const handleSubcategoryChange = (subcategoryId: number | null) => {
-    setSelectedSubcategory(subcategoryId);
+  // Handle subcategory change
+  const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedSubcategory(value ? Number(value) : null);
+    
+    // Return focus to search input
+    setTimeout(() => {
+      if (searchInputRef.current && widgetActiveRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, 50);
   };
   
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  };
+  
+  // Handle search input focus
+  const handleSearchFocus = () => {
+    widgetActiveRef.current = true;
+  };
+  
+  // Clear all filters
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCategory(null);
     setSelectedSubcategory(null);
+    
+    // Reset to all terms immediately, sorted alphabetically
+    setVisibleTerms(sortTermsAlphabetically(dictionaryData.terms));
+    
+    // Focus the search input
+    setTimeout(() => {
+      if (searchInputRef.current && widgetActiveRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, 0);
   };
-
+  
   // Handle key press for double-enter detection
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       const now = Date.now();
       
-      // Check if this is a second Enter press within 500ms
       if (lastEnterPressRef.current && now - lastEnterPressRef.current < 500) {
-        // Open Cambridge Dictionary in a new tab
+        // Double-Enter detected
         const encodedTerm = encodeURIComponent(searchTerm.trim());
         window.open(`https://dictionary.cambridge.org/dictionary/english-spanish/${encodedTerm}`, '_blank');
         
-        // Reset the timer and visual indicator
         lastEnterPressRef.current = null;
         setEnterPressed(false);
         
-        // Clear any existing timeout
         if (enterPressTimeoutRef.current) {
           window.clearTimeout(enterPressTimeoutRef.current);
           enterPressTimeoutRef.current = null;
         }
       } else {
-        // First Enter press - start the timer
+        // First Enter - start timer
         lastEnterPressRef.current = now;
         setEnterPressed(true);
         
-        // Set a timeout to reset the visual indicator after 1 second
         if (enterPressTimeoutRef.current) {
           window.clearTimeout(enterPressTimeoutRef.current);
         }
@@ -161,34 +277,33 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
       }
     }
   };
-
-  // Clean up timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (enterPressTimeoutRef.current) {
-        window.clearTimeout(enterPressTimeoutRef.current);
-      }
-    };
-  }, []);
-
+  
   return (
     <div className={`dictionary-widget ${orientation}`} tabIndex={-1}>
+      {/* SEARCH INPUT */}
       <div className="search-container">
         <input
           type="text"
           placeholder="Search terms, translations, or tags..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           onKeyDown={handleKeyPress}
+          onFocus={handleSearchFocus}
           className={`search-input ${enterPressed ? 'enter-pressed' : ''}`}
           ref={searchInputRef}
-          tabIndex={-1}
+          autoFocus={showWidgets}
         />
         {searchTerm && (
           <button 
             className="clear-search" 
-            onClick={() => setSearchTerm('')}
-            tabIndex={-1}
+            onClick={() => {
+              setSearchTerm('');
+              setTimeout(() => {
+                if (searchInputRef.current && widgetActiveRef.current) {
+                  searchInputRef.current.focus();
+                }
+              }, 0);
+            }}
           >
             ×
           </button>
@@ -198,12 +313,12 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
         </div>
       </div>
       
+      {/* FILTER CONTROLS */}
       <div className="filter-container">
         <select 
-          value={selectedCategory || ''}
-          onChange={(e) => handleCategoryChange(e.target.value ? Number(e.target.value) : null)}
+          value={selectedCategory === null ? '' : selectedCategory}
+          onChange={handleCategoryChange}
           className="category-select"
-          tabIndex={-1}
         >
           <option value="">All Categories</option>
           {categories.map(category => (
@@ -213,12 +328,11 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
           ))}
         </select>
         
-        {selectedCategory && (
+        {selectedCategory !== null && (
           <select 
-            value={selectedSubcategory || ''}
-            onChange={(e) => handleSubcategoryChange(e.target.value ? Number(e.target.value) : null)}
+            value={selectedSubcategory === null ? '' : selectedSubcategory}
+            onChange={handleSubcategoryChange}
             className="subcategory-select"
-            tabIndex={-1}
           >
             <option value="">All Subcategories</option>
             {subcategories.map(subcategory => (
@@ -229,29 +343,34 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
           </select>
         )}
         
-        {(selectedCategory || selectedSubcategory || searchTerm) && (
+        {(selectedCategory !== null || selectedSubcategory !== null || searchTerm.trim() !== '') && (
           <button 
             className="clear-filters-btn"
             onClick={clearFilters}
-            tabIndex={-1}
           >
             Clear All
           </button>
         )}
       </div>
       
+      {/* RESULTS COUNT */}
       <div className="results-count">
-        {filteredTerms.length} {filteredTerms.length === 1 ? 'result' : 'results'}
+        {isLoading 
+          ? 'Loading...' 
+          : `${visibleTerms.length} ${visibleTerms.length === 1 ? 'result' : 'results'}`
+        }
       </div>
       
-      <div className="terms-list" ref={termsListRef}>
-        {filteredTerms.length > 0 ? (
-          filteredTerms.map(term => (
+      {/* TERMS LIST */}
+      <div className="terms-list">
+        {isLoading ? (
+          <div className="loading">Loading dictionary...</div>
+        ) : visibleTerms.length > 0 ? (
+          visibleTerms.map(term => (
             <div 
               key={term.id} 
               className={`term-item ${expandedTermId === term.id ? 'expanded' : ''}`}
               onClick={() => handleTermClick(term.id)}
-              tabIndex={-1}
             >
               <div className="term-header">
                 <div className="term-content">
@@ -273,6 +392,11 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
                           onClick={(e) => {
                             e.stopPropagation();
                             setSearchTerm(tag);
+                            setTimeout(() => {
+                              if (searchInputRef.current && widgetActiveRef.current) {
+                                searchInputRef.current.focus();
+                              }
+                            }, 0);
                           }}
                         >
                           {tag}
