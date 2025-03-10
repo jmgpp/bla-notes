@@ -188,7 +188,7 @@
           }
           
           .term-header {
-            padding: 8px 10px;
+            padding: 6px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -196,9 +196,11 @@
             
             .term-title {
               display: flex;
-              flex-direction: column;
+              flex-direction: row;
+              align-items: center;
               flex: 1;
               min-width: 0; // Important for text-overflow to work
+              gap: 8px;
               
               .english-term {
                 font-weight: 500;
@@ -206,15 +208,22 @@
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                flex: 1;
               }
               
               .spanish-term {
                 color: #0d6efd;
                 font-size: 0.9rem;
-                margin-top: 2px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                flex: 1;
+                
+                &:before {
+                  content: "→";
+                  margin-right: 4px;
+                  color: #6c757d;
+                }
               }
             }
             
@@ -309,16 +318,13 @@
   &.landscape {
     .dictionary-results {
       .terms-list {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        display: block; // Reset to block display
         
         .term-item {
-          margin-bottom: 0;
+          margin-bottom: 4px; // Reduce margin to fit more items
           
-          // When expanded, make it take full width
-          &.expanded {
-            grid-column: 1 / -1;
+          .term-header {
+            padding: 4px 10px; // Reduce padding to make entries more compact
           }
         }
       }
@@ -329,11 +335,22 @@
 // Responsive adjustments
 @media (max-width: 768px) {
   .dictionary-widget {
-    &.landscape {
-      .dictionary-results {
-        .terms-list {
-          // Switch back to single column on small screens
-          grid-template-columns: 1fr;
+    .dictionary-results {
+      .terms-list {
+        .term-item {
+          .term-header {
+            .term-title {
+              flex-direction: column; // Stack vertically on smaller screens
+              align-items: flex-start;
+              gap: 2px;
+              
+              .spanish-term {
+                &:before {
+                  content: none; // Remove arrow on small screens
+                }
+              }
+            }
+          }
         }
       }
     }
