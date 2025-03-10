@@ -116,14 +116,8 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
     const categoryOrder = [
       'Hospitals', 'Clinics', 'Pharmacies', 'Health Insurance',
       'Banks', 'Credit Unions', 'Investment Firms', 'Debt',
-      'Pain', 'Chronic', 'Antibiotics', 'Mental Health', 'Diabetes', 'Cholesterol',
-      'Blood Thinners', 'Hypertension', 'Respiratory', 'Gastrointestinal',
-      'Government', 'Healthcare'
+      'Pain Relievers', 'Chronic Medications', 'Antibiotics', 'Mental Health Medications'
     ];
-    
-    // Always put "Other" at the end
-    if (a === 'Other') return 1;
-    if (b === 'Other') return -1;
     
     const indexA = categoryOrder.indexOf(a);
     const indexB = categoryOrder.indexOf(b);
@@ -145,12 +139,8 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
   )).sort((a, b) => {
     // Custom sort order for main groups
     const groupOrder = [
-      'Hospitals', 'Pharmacies', 'Health Insurance', 'Financial', 'Medication', 'Government', 'Healthcare'
+      'Hospitals', 'Pharmacies', 'Health Insurance', 'Financial', 'Medication'
     ];
-    
-    // Always put "Other" at the end
-    if (a === 'Other') return 1;
-    if (b === 'Other') return -1;
     
     const indexA = groupOrder.indexOf(a);
     const indexB = groupOrder.indexOf(b);
@@ -180,12 +170,8 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
   const sortedGroups = Object.keys(groupedBrands).sort((a, b) => {
     // Custom sort order for main groups
     const groupOrder = [
-      'Hospitals', 'Pharmacies', 'Health Insurance', 'Financial', 'Medication', 'Government', 'Healthcare'
+      'Hospitals', 'Pharmacies', 'Health Insurance', 'Financial', 'Medication'
     ];
-    
-    // Always put "Other" at the end
-    if (a === 'Other') return 1;
-    if (b === 'Other') return -1;
     
     const indexA = groupOrder.indexOf(a);
     const indexB = groupOrder.indexOf(b);
@@ -264,6 +250,26 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
 
   return (
     <div className={`brands-widget ${orientation}`}>
+      <div className="widget-header">
+        <h2>Brands</h2>
+        <div className="widget-controls">
+          <button 
+            className="add-button" 
+            onClick={handleAddBrand}
+            title="Add New Brand"
+          >
+            <FaPlus />
+          </button>
+          <button 
+            className="import-export-button" 
+            onClick={handleImportExportOpen}
+            title="Import/Export Brands"
+          >
+            <FaFileExport />
+          </button>
+        </div>
+      </div>
+      
       <div className="search-container">
         <input
           ref={searchInputRef}
@@ -298,7 +304,7 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
       
       <div className="filters-container">
         <div className="filters-scroll">
-          {groups.map((group) => (
+          {groups.map(group => (
             <button
               key={group}
               className={`filter-button ${activeFilter === group ? 'active' : ''}`}
@@ -320,12 +326,12 @@ export const BrandsWidget = ({ orientation, showWidgets, selectedText }: BrandsW
         {filteredBrands.length === 0 ? (
           <div className="no-results">No matches found</div>
         ) : (
-          sortedGroups.map((group) => (
+          sortedGroups.map(group => (
             <div key={`group-${group}-${searchTerm}-${rerenderKey}`} className="category-section">
               <div className="category-header" style={{ backgroundColor: getGroupColor(group) }}>
                 {group} <span className="category-count">({groupedBrands[group].length})</span>
               </div>
-              {groupedBrands[group].map((brand) => {
+              {groupedBrands[group].map(brand => {
                 const isUserData = isUserBrand(brand.name);
                 return (
                   <div 

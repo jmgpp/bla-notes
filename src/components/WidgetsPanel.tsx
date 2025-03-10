@@ -330,7 +330,7 @@ function WidgetsPanel({
                   className={`tab-button ${activeWidget === 'suffixes' ? 'active' : ''}`}
                   onClick={() => setActiveWidget('suffixes')}
                 >
-                  Suffixes
+                  Suff
                 </button>
                 <button
                   className={`tab-button ${activeWidget === 'brands' ? 'active' : ''}`}

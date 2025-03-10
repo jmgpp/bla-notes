@@ -1,0 +1,138 @@
+.import-export-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+
+  .section {
+    h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    p {
+      margin-bottom: 15px;
+      color: #555;
+      font-size: 14px;
+    }
+  }
+  
+  .divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 5px 0;
+  }
+  
+  .import-options {
+    margin-bottom: 15px;
+    
+    .radio-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      cursor: pointer;
+      
+      input {
+        margin-right: 8px;
+      }
+      
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .file-input {
+    margin-bottom: 15px;
+    display: flex;
+    
+    input[type="file"] {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: -1;
+    }
+    
+    label {
+      display: inline-block;
+      padding: 8px 12px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+  }
+  
+  .message {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    
+    &.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    &.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .import-export-container {
+    gap: 20px;
+    
+    .section {
+      h4 {
+        font-size: 16px;
+      }
+      
+      p {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .import-export-container {
+    gap: 15px;
+    
+    .section {
+      h4 {
+        font-size: 15px;
+        margin-bottom: 5px;
+      }
+      
+      p {
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+    }
+    
+    .import-options {
+      margin-bottom: 10px;
+    }
+    
+    .file-input {
+      margin-bottom: 10px;
+    }
+  }
+} 

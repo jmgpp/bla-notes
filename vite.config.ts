@@ -5,4 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/bla-notes/',
+  assetsInclude: ['**/*.json'],
+  json: {
+    stringify: true
+  }
 })

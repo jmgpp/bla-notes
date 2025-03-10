@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, forwardRef } from 'react';
+import React, { useEffect, useRef, forwardRef, useState } from 'react';
 import './CommandSuggestions.scss';
 import { 
-  brands, 
-  Brand, 
   getCategoryGroupMap, 
   getGroupColorMap, 
   getCategoryColorMap 
 } from '../data/brands';
+import { userDataService } from '../services/UserDataService';
+import { Brand } from '../data/types';
 
 interface Command {
   command: string;
@@ -41,6 +41,14 @@ const CommandSuggestions = forwardRef<HTMLDivElement, CommandSuggestionsProps>((
 }, ref) => {
   const selectedItemRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [brandsData, setBrandsData] = useState<Brand[]>([]);
+  
+  // Load brands data when component mounts or becomes visible
+  useEffect(() => {
+    if (visible && type === 'brand') {
+      setBrandsData(userDataService.getAllBrands());
+    }
+  }, [visible, type]);
 
   // Scroll selected item into view
   useEffect(() => {
@@ -101,7 +109,7 @@ const CommandSuggestions = forwardRef<HTMLDivElement, CommandSuggestionsProps>((
 
   const renderBrandSuggestions = () => {
     // Use the same filtering logic as in BrandsWidget
-    const filteredBrands = brands.filter(brand => {
+    const filteredBrands = brandsData.filter(brand => {
       const matchesSearch = 
         brand.name.toLowerCase().includes(filter.toLowerCase()) ||
         (brand.category && brand.category.toLowerCase().includes(filter.toLowerCase())) ||

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import dictionaryData from '../data/dictionary.json';
+import { dictionaryData } from '../data/dictionaryData';
 import './DictionaryCleanupTool.scss';
 
 interface Term {

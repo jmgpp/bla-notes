@@ -1,0 +1,213 @@
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    
+    label {
+      font-size: 14px;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    
+    input, textarea, select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      
+      &:focus {
+        border-color: #0d6efd;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+      }
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+    
+    .form-group.half {
+      flex: 1;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .snippets-container {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 10px;
+    
+    .no-snippets {
+      color: #6c757d;
+      font-style: italic;
+      margin: 0;
+      padding: 5px 0;
+      font-size: 14px;
+      text-align: center;
+    }
+    
+    .snippet-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      p {
+        margin: 0;
+        flex: 1;
+        font-size: 14px;
+      }
+      
+      .snippet-actions {
+        display: flex;
+        align-items: center;
+
+        .snippet-edit {
+          background: none;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+          color: #0d6efd;
+          padding: 0 8px;
+          
+          &:hover {
+            color: #0b5ed7;
+          }
+        }
+        
+        .snippet-remove {
+          background: none;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+          color: #dc3545;
+          padding: 0 0 0 8px;
+          
+          &:hover {
+            color: #bd2130;
+          }
+        }
+      }
+    }
+  }
+  
+  .add-snippet {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    
+    textarea {
+      width: 100%;
+    }
+    
+    .snippet-form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  }
+}
+
+/* Button styles */
+.button-primary {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: #0b5ed7;
+  }
+  
+  &:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+}
+
+.button-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: #5a6268;
+  }
+}
+
+.button-tertiary {
+  background-color: #f8f9fa;
+  color: #212529;
+  border: 1px solid #dee2e6;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .editor-form {
+    gap: 10px;
+    
+    .form-group {
+      margin-bottom: 8px;
+      
+      label {
+        font-size: 13px;
+        margin-bottom: 3px;
+      }
+      
+      input, textarea, select {
+        padding: 6px 8px;
+        font-size: 13px;
+      }
+    }
+    
+    .snippets-container {
+      max-height: 120px;
+    }
+  }
+} 

@@ -64,9 +64,9 @@ function Toolbar({ orientation, onToggleWidgets, showWidgets, activeWidget, setA
               <button 
                 className={`btn btn-sm mx-1 ${getButtonClass('suffixes')}`}
                 onClick={() => handleWidgetClick('suffixes')}
-                tabIndex={-1}
+                title="Street Suffixes"
               >
-                Suffixes
+                Suff
               </button>
               <button 
                 className={`btn btn-sm mx-1 ${getButtonClass('brands')}`}

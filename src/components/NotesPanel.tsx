@@ -3,7 +3,8 @@ import './NotesPanel.scss';
 import CommandSuggestions from './CommandSuggestions';
 import ContextMenu, { getRecommendedOptionIndex } from './ContextMenu';
 import { brands, Brand } from '../data/brands';
-import dictionaryData from '../data/dictionary.json';
+import { dictionaryData } from '../data/dictionaryData';
+import { userDataService } from '../services/UserDataService';
 
 interface NotesPanelProps {
   orientation: string;
@@ -84,7 +85,8 @@ const searchDictionary = async (query: string) => {
   if (!query || query.trim() === '') return null;
   
   const normalizedQuery = query.toLowerCase().trim();
-  const terms = dictionaryData.terms as Array<{
+  // Get terms from userDataService to include both default and user-added terms
+  const terms = userDataService.getAllTerms() as Array<{
     id: string;
     categoryId: number;
     subcategoryId: number;
@@ -537,15 +539,19 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
     textarea.selectionStart = newCursorPos;
     textarea.selectionEnd = newCursorPos;
     
+    // Get the most up-to-date brand information from userDataService
+    const allBrands = userDataService.getAllBrands();
+    const updatedBrand = allBrands.find(b => b.name === brand.name) || brand;
+    
     // Check if the brand has snippets and create cards for each one
-    if (brand.snippets && brand.snippets.length > 0) {
-      brand.snippets.forEach(snippet => {
+    if (updatedBrand.snippets && updatedBrand.snippets.length > 0) {
+      updatedBrand.snippets.forEach(snippet => {
         onAddCard({
           type: 'brand-snippet',
           data: {
-            brandName: brand.name,
+            brandName: updatedBrand.name,
             snippet: snippet,
-            category: brand.category
+            category: updatedBrand.category
           }
         });
       });

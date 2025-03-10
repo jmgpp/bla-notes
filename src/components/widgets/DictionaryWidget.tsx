@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DictionaryWidget.scss';
-import dictionaryData from '../../data/dictionary.json';
+import { dictionaryData } from '../../data/dictionaryData';
+import { userDataService } from '../../services/UserDataService';
+import TermEditorModal from '../modals/TermEditorModal';
+import ImportExportModal from '../modals/ImportExportModal';
+import { FaPlus, FaEdit, FaTrash, FaFileExport } from 'react-icons/fa';
 
 interface DictionaryWidgetProps {
   orientation: 'landscape' | 'portrait';
@@ -19,6 +23,17 @@ interface Term {
   showTags?: boolean;
 }
 
+interface Category {
+  id: number;
+  name: string;
+  subcategories: Subcategory[];
+}
+
+interface Subcategory {
+  id: number;
+  name: string;
+}
+
 const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWidgets, selectedText }) => {
   // STATE MANAGEMENT
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -26,6 +41,11 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
   const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(null);
   const [expandedTermId, setExpandedTermId] = useState<string | null>(null);
   const [enterPressed, setEnterPressed] = useState(false);
+  
+  // State for CRUD operations
+  const [isTermEditorOpen, setIsTermEditorOpen] = useState(false);
+  const [isImportExportOpen, setIsImportExportOpen] = useState(false);
+  const [selectedTerm, setSelectedTerm] = useState<Term | undefined>(undefined);
   
   // Key state for filtering - with forced rerender key
   const [visibleTerms, setVisibleTerms] = useState<Term[]>([]);
@@ -42,7 +62,7 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
   const widgetActiveRef = useRef<boolean>(false);
 
   // CATEGORIES DATA
-  const categories = dictionaryData.categories;
+  const categories: Category[] = (dictionaryData as any).categories || [];
   
   // SUBCATEGORIES for selected category
   const subcategories = selectedCategory !== null 
@@ -100,7 +120,8 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
     
     // Set initial data after a brief delay, sorted alphabetically
     setTimeout(() => {
-      const sortedTerms = sortTermsAlphabetically(dictionaryData.terms);
+      // Use userDataService to get all terms (including user-added ones)
+      const sortedTerms = sortTermsAlphabetically(userDataService.getAllTerms());
       setVisibleTerms(sortedTerms);
       setIsLoading(false);
     }, 100);
@@ -116,8 +137,8 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
     const updateCounter = ++filterUpdateCountRef.current;
     
     try {
-      // Start with all terms
-      let results = [...dictionaryData.terms];
+      // Start with all terms including user terms
+      let results = [...userDataService.getAllTerms()];
       
       // Apply category filter
       if (selectedCategory !== null) {
@@ -151,7 +172,7 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
     } catch (error) {
       console.error("Error in filter application:", error);
     }
-  }, [searchTerm, selectedCategory, selectedSubcategory, isLoading]);
+  }, [searchTerm, selectedCategory, selectedSubcategory, isLoading, rerenderKey]);
   
   // Focus search when widget becomes visible
   useEffect(() => {
@@ -233,7 +254,7 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
     setSelectedSubcategory(null);
     
     // Reset to all terms immediately, sorted alphabetically
-    setVisibleTerms(sortTermsAlphabetically(dictionaryData.terms));
+    setVisibleTerms(sortTermsAlphabetically(userDataService.getAllTerms()));
     
     // Focus the search input
     setTimeout(() => {
@@ -248,170 +269,266 @@ const DictionaryWidget: React.FC<DictionaryWidgetProps> = ({ orientation, showWi
     if (e.key === 'Enter' && searchTerm.trim()) {
       const now = Date.now();
       
-      if (lastEnterPressRef.current && now - lastEnterPressRef.current < 500) {
-        // Double-Enter detected
-        const encodedTerm = encodeURIComponent(searchTerm.trim());
-        window.open(`https://dictionary.cambridge.org/dictionary/english-spanish/${encodedTerm}`, '_blank');
-        
-        lastEnterPressRef.current = null;
-        setEnterPressed(false);
-        
-        if (enterPressTimeoutRef.current) {
-          window.clearTimeout(enterPressTimeoutRef.current);
-          enterPressTimeoutRef.current = null;
-        }
-      } else {
-        // First Enter - start timer
-        lastEnterPressRef.current = now;
+      // Clear any pending timeout
+      if (enterPressTimeoutRef.current !== null) {
+        window.clearTimeout(enterPressTimeoutRef.current);
+      }
+      
+      if (lastEnterPressRef.current !== null && now - lastEnterPressRef.current < 500) {
+        // Double Enter press detected
         setEnterPressed(true);
         
-        if (enterPressTimeoutRef.current) {
-          window.clearTimeout(enterPressTimeoutRef.current);
+        // Auto-expand the first match
+        if (visibleTerms.length > 0) {
+          setExpandedTermId(visibleTerms[0].id);
         }
         
+        lastEnterPressRef.current = null;
+      } else {
+        // Single Enter press
+        lastEnterPressRef.current = now;
+        setEnterPressed(false);
+        
+        // Reset after a delay
         enterPressTimeoutRef.current = window.setTimeout(() => {
-          setEnterPressed(false);
           lastEnterPressRef.current = null;
-          enterPressTimeoutRef.current = null;
-        }, 1000);
+        }, 500);
       }
     }
   };
+
+  // CRUD Operations
+  const handleAddTerm = () => {
+    setSelectedTerm(undefined);
+    setIsTermEditorOpen(true);
+  };
+
+  const handleEditTerm = (term: Term) => {
+    setSelectedTerm(term);
+    setIsTermEditorOpen(true);
+  };
+
+  const handleDeleteTerm = (termId: string) => {
+    if (window.confirm('Are you sure you want to delete this term?')) {
+      userDataService.deleteTerm(termId);
+      // Force re-render by incrementing key
+      setRerenderKey(prev => prev + 1);
+    }
+  };
+
+  const handleTermEditorClose = () => {
+    setIsTermEditorOpen(false);
+    // Force re-render after editing
+    setRerenderKey(prev => prev + 1);
+  };
+
+  const handleImportExportOpen = () => {
+    setIsImportExportOpen(true);
+  };
+
+  const handleImportExportClose = () => {
+    setIsImportExportOpen(false);
+    // Force re-render after import/export
+    setRerenderKey(prev => prev + 1);
+  };
+
+  // Check if a term is a user-added one
+  const isUserTerm = (termId: string) => {
+    return userDataService.isUserTerm(termId);
+  };
   
-  return (
-    <div className={`dictionary-widget ${orientation}`} tabIndex={-1}>
-      {/* SEARCH INPUT */}
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search terms, translations, or tags..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onKeyDown={handleKeyPress}
-          onFocus={handleSearchFocus}
-          className={`search-input ${enterPressed ? 'enter-pressed' : ''}`}
-          ref={searchInputRef}
-          autoFocus={showWidgets}
-        />
-        {searchTerm && (
-          <button 
-            className="clear-search" 
-            onClick={() => {
-              setSearchTerm('');
-              setTimeout(() => {
-                if (searchInputRef.current && widgetActiveRef.current) {
-                  searchInputRef.current.focus();
-                }
-              }, 0);
-            }}
-          >
-            ×
-          </button>
-        )}
-        <div className={`search-hint ${enterPressed ? 'active' : ''}`}>
-          {enterPressed ? 'Press Enter again to search in Cambridge Dictionary' : 'Press Enter twice to search in Cambridge Dictionary'}
+  // RENDERING
+  const renderContent = () => {
+    if (isLoading) {
+      return <div className="loading-message">Loading dictionary...</div>;
+    }
+    
+    if (visibleTerms.length === 0) {
+      return <div className="no-results">No terms found. Try adjusting your filters.</div>;
+    }
+    
+    return (
+      <div className="dictionary-results">
+        <div className="results-count">
+          {visibleTerms.length} {visibleTerms.length === 1 ? 'term' : 'terms'} found
+        </div>
+        
+        <div className="terms-list">
+          {visibleTerms.map((term) => {
+            const isExpanded = expandedTermId === term.id;
+            const userTerm = isUserTerm(term.id);
+            
+            return (
+              <div 
+                key={term.id} 
+                className={`term-item ${isExpanded ? 'expanded' : ''} ${userTerm ? 'user-term' : ''}`}
+              >
+                <div className="term-header" onClick={() => handleTermClick(term.id)}>
+                  <div className="term-title">
+                    <span className="english-term">{term.englishTerm}</span>
+                    {term.spanishTerm && (
+                      <span className="spanish-term">{term.spanishTerm}</span>
+                    )}
+                  </div>
+                  
+                  <div className="term-actions">
+                    {userTerm ? (
+                      <>
+                        <button 
+                          className="action-button edit-button" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditTerm(term);
+                          }}
+                        >
+                          <FaEdit />
+                        </button>
+                        <button 
+                          className="action-button delete-button" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTerm(term.id);
+                          }}
+                        >
+                          <FaTrash />
+                        </button>
+                      </>
+                    ) : (
+                      <button 
+                        className="action-button edit-button" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditTerm(term);
+                        }}
+                      >
+                        <FaEdit />
+                      </button>
+                    )}
+                    <div className="expand-icon">{isExpanded ? '−' : '+'}</div>
+                  </div>
+                </div>
+                
+                {isExpanded && (
+                  <div className="term-details">
+                    {term.notes && (
+                      <div className="term-notes">{term.notes}</div>
+                    )}
+                    
+                    {term.tags && term.tags.length > 0 && (
+                      <div className="term-tags">
+                        {term.tags.map((tag, index) => (
+                          <span key={index} className="tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <div className="term-meta">
+                      <div className="term-category">
+                        {categories.find(cat => cat.id === term.categoryId)?.name || 'Unknown Category'}
+                        {term.subcategoryId !== 0 && (
+                          <> › {categories
+                            .find(cat => cat.id === term.categoryId)
+                            ?.subcategories.find(sub => sub.id === term.subcategoryId)
+                            ?.name || 'Unknown Subcategory'}</>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
-      
-      {/* FILTER CONTROLS */}
-      <div className="filter-container">
-        <select 
-          value={selectedCategory === null ? '' : selectedCategory}
-          onChange={handleCategoryChange}
-          className="category-select"
-        >
-          <option value="">All Categories</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+    );
+  };
+  
+  return (
+    <div className={`dictionary-widget ${orientation === 'landscape' ? 'landscape' : 'portrait'}`}>
+      <div className="dictionary-filters">
+        <div className="filter-row search-row">
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Search terms..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onFocus={handleSearchFocus}
+            onKeyDown={handleKeyPress}
+            className="search-input"
+          />
+          
+          <div className="action-buttons">
+            <button 
+              className="action-button add-button" 
+              onClick={handleAddTerm}
+              title="Add New Term"
+            >
+              <FaPlus />
+            </button>
+            <button 
+              className="action-button import-export-button" 
+              onClick={handleImportExportOpen}
+              title="Import/Export Terms"
+            >
+              <FaFileExport />
+            </button>
+            <button
+              className="action-button clear-button"
+              onClick={clearFilters}
+              title="Clear All Filters"
+            >
+              ×
+            </button>
+          </div>
+        </div>
         
-        {selectedCategory !== null && (
-          <select 
-            value={selectedSubcategory === null ? '' : selectedSubcategory}
-            onChange={handleSubcategoryChange}
-            className="subcategory-select"
+        <div className="filter-row categories">
+          <select
+            value={selectedCategory === null ? '' : selectedCategory.toString()}
+            onChange={handleCategoryChange}
+            className="category-select"
           >
-            <option value="">All Subcategories</option>
-            {subcategories.map(subcategory => (
-              <option key={subcategory.id} value={subcategory.id}>
-                {subcategory.name}
+            <option value="">All Categories</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
               </option>
             ))}
           </select>
-        )}
-        
-        {(selectedCategory !== null || selectedSubcategory !== null || searchTerm.trim() !== '') && (
-          <button 
-            className="clear-filters-btn"
-            onClick={clearFilters}
-          >
-            Clear All
-          </button>
-        )}
-      </div>
-      
-      {/* RESULTS COUNT */}
-      <div className="results-count">
-        {isLoading 
-          ? 'Loading...' 
-          : `${visibleTerms.length} ${visibleTerms.length === 1 ? 'result' : 'results'}`
-        }
-      </div>
-      
-      {/* TERMS LIST */}
-      <div className="terms-list">
-        {isLoading ? (
-          <div className="loading">Loading dictionary...</div>
-        ) : visibleTerms.length > 0 ? (
-          visibleTerms.map(term => (
-            <div 
-              key={term.id} 
-              className={`term-item ${expandedTermId === term.id ? 'expanded' : ''}`}
-              onClick={() => handleTermClick(term.id)}
+          
+          {selectedCategory !== null && (
+            <select
+              value={selectedSubcategory === null ? '' : selectedSubcategory.toString()}
+              onChange={handleSubcategoryChange}
+              className="subcategory-select"
             >
-              <div className="term-header">
-                <div className="term-content">
-                  <span className="english-term">{term.englishTerm}</span>
-                  <span className="arrow-separator">→</span>
-                  <span className="spanish-term">{term.spanishTerm}</span>
-                </div>
-              </div>
-              
-              {expandedTermId === term.id && (
-                <div className="term-details">
-                  {term.notes && <div className="notes">{term.notes}</div>}
-                  {term.tags && term.tags.length > 0 && (
-                    <div className="tags">
-                      {term.tags.map(tag => (
-                        <span 
-                          key={tag} 
-                          className="tag"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSearchTerm(tag);
-                            setTimeout(() => {
-                              if (searchInputRef.current && widgetActiveRef.current) {
-                                searchInputRef.current.focus();
-                              }
-                            }, 0);
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <div className="no-results">No matching terms found</div>
-        )}
+              <option value="">All Subcategories</option>
+              {subcategories.map(subcat => (
+                <option key={subcat.id} value={subcat.id}>
+                  {subcat.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
+      
+      <div className="dictionary-content">
+        {renderContent()}
+      </div>
+
+      {/* Modals */}
+      <TermEditorModal 
+        isOpen={isTermEditorOpen}
+        onClose={handleTermEditorClose}
+        term={selectedTerm}
+      />
+
+      <ImportExportModal
+        isOpen={isImportExportOpen}
+        onClose={handleImportExportClose}
+      />
     </div>
   );
 };
