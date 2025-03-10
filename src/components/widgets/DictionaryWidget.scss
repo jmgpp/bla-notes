@@ -197,16 +197,24 @@
             .term-title {
               display: flex;
               flex-direction: column;
+              flex: 1;
+              min-width: 0; // Important for text-overflow to work
               
               .english-term {
                 font-weight: 500;
                 color: #212529;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
               
               .spanish-term {
                 color: #0d6efd;
                 font-size: 0.9rem;
                 margin-top: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
             }
             
@@ -214,6 +222,7 @@
               display: flex;
               align-items: center;
               gap: 6px;
+              flex-shrink: 0;
               
               .action-button {
                 background: none;
@@ -248,12 +257,8 @@
               .expand-icon {
                 color: #6c757d;
                 font-size: 1rem;
-                line-height: 1;
                 width: 20px;
-                height: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                text-align: center;
               }
             }
           }
@@ -261,13 +266,13 @@
           .term-details {
             padding: 0 10px 10px;
             border-top: 1px solid #dee2e6;
-            margin-top: 0;
+            margin-top: 2px;
             
             .term-notes {
-              font-size: 0.85rem;
-              color: #495057;
               margin-top: 8px;
+              color: #495057;
               line-height: 1.4;
+              font-size: 0.85rem;
             }
             
             .term-tags {
@@ -279,9 +284,9 @@
               .tag {
                 background-color: #e2e3e5;
                 color: #41464b;
-                font-size: 0.75rem;
                 padding: 2px 6px;
                 border-radius: 3px;
+                font-size: 0.75rem;
               }
             }
             
@@ -300,136 +305,51 @@
     }
   }
   
-  // Responsive adjustments for landscape/portrait modes
+  // Landscape mode specific styles
   &.landscape {
-    .widget-header {
-      h2 {
-        font-size: 1.2rem;
-      }
-    }
-    
-    .dictionary-filters {
-      .filter-row.search-row {
-        .action-buttons {
-          .action-button {
-            &.add-button, &.import-export-button {
-              font-size: 1rem;
-              padding: 4px 6px;
-            }
+    .dictionary-results {
+      .terms-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        
+        .term-item {
+          margin-bottom: 0;
+          
+          // When expanded, make it take full width
+          &.expanded {
+            grid-column: 1 / -1;
           }
         }
       }
     }
   }
-  
-  &.portrait {
-    .widget-header {
-      padding: 4px 6px;
-      
-      h2 {
-        font-size: 1rem;
-      }
-      
-      .widget-controls button {
-        font-size: 0.8rem;
-        padding: 3px;
-      }
-    }
-    
-    .dictionary-filters {
-      padding: 4px;
-      
-      .filter-row {
-        margin-bottom: 4px;
-        gap: 4px;
-        
-        &.search-row {
-          .search-input {
-            padding: 5px 6px;
-            font-size: 0.85rem;
-          }
-          
-          .action-buttons {
-            .action-button {
-              &.add-button, &.import-export-button {
-                font-size: 0.8rem;
-                padding: 3px;
-              }
-              
-              &.clear-button {
-                font-size: 1.1rem;
-                padding: 0 6px;
-              }
-            }
-          }
-        }
-        
-        &.categories select {
-          padding: 4px 5px;
-          font-size: 0.8rem;
-        }
-      }
-    }
-    
-    .dictionary-content {
-      padding: 0 4px 4px;
-      
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .dictionary-widget {
+    &.landscape {
       .dictionary-results {
         .terms-list {
-          .term-item {
-            margin-bottom: 4px;
-            
-            .term-header {
-              padding: 6px 8px;
-              
-              .term-title {
-                .english-term {
-                  font-size: 0.9rem;
-                }
-                
-                .spanish-term {
-                  font-size: 0.8rem;
-                }
-              }
-              
-              .term-actions {
-                gap: 3px;
-                
-                .action-button {
-                  font-size: 0.7rem;
-                  padding: 3px;
-                }
-                
-                .expand-icon {
-                  font-size: 0.9rem;
-                  width: 16px;
-                  height: 16px;
-                }
-              }
-            }
-            
-            .term-details {
-              padding: 0 8px 8px;
-              
-              .term-notes {
-                font-size: 0.8rem;
-                margin-top: 6px;
-              }
-              
-              .term-tags {
-                margin-top: 6px;
-                
-                .tag {
-                  font-size: 0.7rem;
-                  padding: 1px 4px;
-                }
-              }
-              
-              .term-meta {
-                margin-top: 6px;
-                font-size: 0.7rem;
-              }
-            }
+          // Switch back to single column on small screens
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}
+
+// Very small screens
+@media (max-width: 480px) {
+  .dictionary-widget {
+    .dictionary-filters {
+      .filter-row {
+        &.categories {
+          flex-direction: column;
+          
+          select {
+            width: 100%;
           }
         }
       }
